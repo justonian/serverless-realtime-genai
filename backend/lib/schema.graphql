@@ -1,0 +1,126 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+############## ENUMS #####################
+
+enum ThreadStatus {
+  NEW
+  PENDING
+  PROCESSING
+  COMPLETE
+  ERROR
+}
+
+############## INPUTS #####################
+
+input GetThreadInput {
+  threadId: ID!
+}
+
+input DeleteThreadInput {
+  threadId: ID!
+}
+
+input CreateThreadInput {
+  personaId: ID!
+}
+
+input MessageInput {
+  sender: String!
+  message: String!
+}
+
+input CreateMessageInput {
+  threadId: ID!
+  prompt: ID!
+}
+
+input SystemSendMessageChunkInput {
+  userId: ID!
+  threadId: ID!
+  status: ThreadStatus!
+
+  chunkType: String!
+  chunk: String!
+}
+
+input RecieveMessageChunkAsyncInput {
+  threadId: ID!
+}
+
+############## TYPES #####################
+
+type MessageChunk @aws_cognito_user_pools @aws_iam {
+  userId: ID!
+  threadId: ID!
+  status: ThreadStatus!
+
+  chunkType: String!
+  chunk: String!
+}
+
+type Message @aws_cognito_user_pools @aws_iam {
+  sender: String!
+  message: String!
+  createdAt: String!
+}
+
+type Thread @aws_cognito_user_pools @aws_iam {
+  threadId: ID!
+  userId: ID!
+  messages: [Message!]
+  status: ThreadStatus!
+  createdAt: String!
+}
+
+############## PAYLOADS #####################
+
+type CreateThreadPayload @aws_cognito_user_pools @aws_iam {
+  thread: Thread
+}
+
+type CreateMessagePayload @aws_cognito_user_pools @aws_iam {
+  message: Message
+}
+
+type DeleteThreadPayload @aws_cognito_user_pools @aws_iam {
+  thread: Thread
+}
+
+############## QUERIES #####################
+
+type Query @aws_cognito_user_pools @aws_iam {
+  getThread(input: GetThreadInput!): Thread
+  getAllThreads: [Thread!]
+}
+
+############## MUTATIONS #####################
+
+type Mutation {
+  # Creation
+  createThread(input: CreateThreadInput!): CreateThreadPayload
+    @aws_cognito_user_pools
+    @aws_iam
+  createMessageAsync(input: CreateMessageInput!): CreateMessagePayload
+    @aws_cognito_user_pools
+
+  # Deletion
+  deleteThread(input: DeleteThreadInput!): DeleteThreadPayload
+    @aws_cognito_user_pools
+    @aws_iam
+
+  # System
+  systemSendMessageChunk(input: SystemSendMessageChunkInput!): MessageChunk
+    @aws_iam
+}
+
+############## SUBSCRIPTIONS #####################
+
+type Subscription {
+  recieveMessageChunkAsync(input: RecieveMessageChunkAsyncInput!): MessageChunk
+    @aws_subscribe(mutations: ["systemSendMessageChunk"])
+    @aws_cognito_user_pools
+}
