@@ -5,8 +5,8 @@
     "chatapp": "bin/chatapp.js"
   },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
+    "build": "./node_modules/typescript/bin/tsc",
+    "watch": "./node_modules/typescript/bin/tsc -w",
     "test": "jest",
     "cdk": "cdk"
   },

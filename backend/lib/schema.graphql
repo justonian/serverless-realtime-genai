@@ -24,10 +24,6 @@ input DeleteThreadInput {
   threadId: ID!
 }
 
-input CreateThreadInput {
-  personaId: ID!
-}
-
 input MessageInput {
   sender: String!
   message: String!
@@ -101,7 +97,7 @@ type Query @aws_cognito_user_pools @aws_iam {
 
 type Mutation {
   # Creation
-  createThread(input: CreateThreadInput!): CreateThreadPayload
+  createThread: CreateThreadPayload
     @aws_cognito_user_pools
     @aws_iam
   createMessageAsync(input: CreateMessageInput!): CreateMessagePayload

@@ -15,18 +15,16 @@ export function request(ctx) {
     }),
     update: {
       expression:
-        'SET #messages = :messages, #status = :status, #createdAt = :createdAt, #persona = :persona, #ttl = :ttl',
+        'SET #messages = :messages, #status = :status, #createdAt = :createdAt, #ttl = :ttl',
       expressionNames: {
         '#status': 'status',
         '#createdAt': 'createdAt',
-        '#persona': 'persona',
         '#messages': 'messages',
         '#ttl': 'ttl'
       },
       expressionValues: {
         ':status': { S: 'NEW' },
         ':createdAt': { S: `${util.time.nowISO8601()}` },
-        ':persona': { M: util.dynamodb.toMapValues(ctx.prev.result) },
         ':messages': { L: [] },
         ':ttl': { N: `${util.time.nowEpochMilliSeconds() + 60 * 60 * 24 * 7}` } // 7 days
       }

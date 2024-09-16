@@ -78,7 +78,7 @@ export class ChatappStack extends cdk.Stack {
 
     // API handled by AppSync
     const api = new appsync.GraphqlApi(this, 'AppSyncApi', {
-      name: 'GenAIApi',
+      name: 'AppsyncBedrockSample',
       definition: appsync.Definition.fromFile(
         path.join(__dirname, './schema.graphql')
       ),
