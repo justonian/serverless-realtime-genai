@@ -7,12 +7,20 @@ import {
   Heading,
   Flex,
   View,
-  Image,
+  Card,
   Grid,
   Divider,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Icon,
+  ScrollView,
 } from "@aws-amplify/ui-react";
 import { Amplify } from "aws-amplify";
 import "@aws-amplify/ui-react/styles.css";
+import { FiStar } from 'react-icons/fi';
 
 import { generateClient } from 'aws-amplify/data';
 import { createThread, createMessageAsync, deleteThread } from './graphql/mutations';
@@ -98,29 +106,52 @@ export default function App() {
   return (
     <Authenticator>
       {({ signOut, user }) => (
-        <Flex
-          className="App"
-          justifyContent="center"
-          alignItems="center"
-          direction="column"
-          width="70%"
-          margin="0 auto"
+        <Grid   columnGap="0.5rem"
+        rowGap="0.5rem"
+        templateColumns="2fr 5fr"
+        templateRows="1fr 6fr 10fr">
+        <Card
+          columnStart="1"
+          columnEnd="-1"
         >
           <Heading level={1}>Bedrock chat App</Heading>
+        </Card>
+        <Card
+          columnStart="1"
+          columnEnd="2"
+        >
+          <ScrollView width="100%" height="600px" maxWidth="1080px">
+          <Table
+            caption=""
+            highlightOnHover={true}>
+            <TableBody>
+            {conversations.map((conversation) => (
+              <TableRow key={conversation.threadId}
+                onClick={() => setThreadId(conversation.threadId)}
+              >
+                <TableCell>{conversation.messages!.length > 0 ? conversation.messages[0].message : ""}</TableCell>
+                <TableCell>
+                <Button
+                  variation="destructive"
+                  onClick={() => deleteConversation(conversation.threadId)}
+                >
+                  X
+                </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+            </TableBody>
+          </Table>
+          </ScrollView>
+          <Button onClick={signOut}>Sign Out</Button>
+        </Card>
+        
+                <Card>
           {threadId &&  (
                 <Conversation threadId={threadId}/>
               )}
            {!threadId && (
           <View as="form" margin="3rem 0" onSubmit={(event) => createConversation(user, event)}>
-            <Flex
-              direction="column"
-              justifyContent="center"
-              gap="2rem"
-              padding="2rem"
-            >
-              
-             
-                <View>
                 <TextField
                 name="prompt"
                 placeholder="Ask me a question"
@@ -133,54 +164,19 @@ export default function App() {
               <Button type="submit" variation="primary">
                 Submit
               </Button>
-              </View>
-              
-              
-            </Flex>
           </View>
+          
           )
         }
-          <Divider />
-          <Heading level={2}>Current Conversations</Heading>
-          <Grid
-            margin="3rem 0"
-            autoFlow="column"
-            justifyContent="center"
-            gap="2rem"
-            alignContent="center"
-          >
-            {conversations.map((conversation) => (
-              <Flex
-                key={conversation.threadId}
-                direction="column"
-                justifyContent="center"
-                alignItems="center"
-                gap="2rem"
-                border="1px solid #ccc"
-                padding="2rem"
-                borderRadius="5%"
-                className="box"
-                onClick={() => setThreadId(conversation.threadId)}
-              >
-                <View>
-                  <Heading level={6}>{conversation.messages!.length > 0 ? conversation.messages[0].message : ""}</Heading>
-                </View>
-                <Button
-                  variation="destructive"
-                  onClick={() => deleteConversation(conversation.threadId)}
-                >
-                  Delete conversation
-                </Button>
-              </Flex>
-            ))}
-          </Grid>
-          <Button onClick={signOut}>Sign Out</Button>
-        </Flex>
+        </Card>  
+        <Card
+        rowStart = "3"
+        columnStart="2"
+        columnEnd="-1">
+        </Card>
+
+        </Grid>
       )}
     </Authenticator>
   );
-}
-
-function useParams(): { threadId: any; } {
-  throw new Error("Function not implemented.");
 }

@@ -1,22 +1,20 @@
 import { useState, useEffect } from "react";
 import {
-  Authenticator,
   Button,
   Text,
   TextField,
   Heading,
   Flex,
   View,
-  Image,
-  Grid,
   Divider,
+  Card,
+  ScrollView,
 } from "@aws-amplify/ui-react";
-import { Amplify } from "aws-amplify";
 import "@aws-amplify/ui-react/styles.css";
 
 import { generateClient } from 'aws-amplify/data';
-import { createThread, createMessageAsync, deleteThread } from './graphql/mutations';
-import { getAllThreads, getThread } from './graphql/queries';
+import { createMessageAsync } from './graphql/mutations';
+import {  getThread } from './graphql/queries';
 import { Thread } from "./API";
 import { recieveMessageChunkAsync } from "./graphql/subscriptions";
 /**
@@ -93,28 +91,23 @@ export default function Conversation({threadId }: {
 
   async function sendMessage(event: any) {
     event.preventDefault();
+    
+    
+    
     const form = new FormData(event.target as HTMLFormElement);
-
+    let prompt =form.get("prompt") as string;
+    
     let messageResponse = await client.graphql({
       query: createMessageAsync,
       variables: {
         input: {
           threadId: conversation?.threadId || threadId,
-          prompt: form.get("prompt") as string,
+          prompt,
     }}});
-
+    await getConversation();
+    setLastMessage("");
     console.log(messageResponse);
     event.target.reset();
-  }
-
-  async function deleteConversation(threadId: string ) {
-    await client.graphql({
-      query: deleteThread,
-      variables: {
-        input: {
-          threadId
-        },
-    }});
   }
 
   async function getConversation( ) {
@@ -132,22 +125,9 @@ export default function Conversation({threadId }: {
    
 
   return (
-    <Flex
-          className="App"
-          justifyContent="center"
-          alignItems="center"
-          direction="column"
-          width="70%"
-          margin="0 auto"
-        >
-          <Heading level={1}>Conversation</Heading>
-          <View as="form" margin="3rem 0" onSubmit={sendMessage}>
-            <Flex
-              direction="column"
-              justifyContent="center"
-              gap="2rem"
-              padding="2rem"
-            >
+
+          <View as="form" onSubmit={sendMessage}>
+            <ScrollView width="100%" height="600px" maxWidth="1080px">
               {conversation && conversation.messages && (
                 <View>
                   {conversation.messages!.map((message, index) => (
@@ -164,6 +144,10 @@ export default function Conversation({threadId }: {
                   )}
                 </View>
               )}
+
+            <Divider />
+              
+              </ScrollView>
               <TextField
                 name="prompt"
                 placeholder="Ask me a question"
@@ -172,13 +156,11 @@ export default function Conversation({threadId }: {
                 variation="quiet"
                 required
               />
-
               <Button type="submit" variation="primary">
-                Submit
-              </Button>
-            </Flex>
+              Submit
+            </Button>
           </View>
-          <Divider />
-        </Flex>
+          
+        
   );
 }
