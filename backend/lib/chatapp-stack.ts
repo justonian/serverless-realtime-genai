@@ -57,6 +57,22 @@ export class ChatappStack extends cdk.Stack {
       value: userPoolClient.userPoolClientId
     });
 
+    // Create an Identity Pool
+    const identityPool = new cognito.CfnIdentityPool(this, 'IdentityPool', {
+      allowUnauthenticatedIdentities: false,
+      cognitoIdentityProviders: [
+        {
+          clientId: userPoolClient.userPoolClientId,
+          providerName: userPool.userPoolProviderName,
+        },
+      ],
+    });
+
+    // Output the Cognito Identity Pool Id
+    new cdk.CfnOutput(this, 'IdentityPoolId', {
+      value: identityPool.ref,
+    });
+
     const bedrockLambda = new lambda.Function(this, "bedrockLambda", {
       functionName: "MyBedrockLambda",
       code: lambda.Code.fromAsset(
@@ -338,5 +354,7 @@ export class ChatappStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'GraphQLAPIURL', {
       value: api.graphqlUrl
     });
+
+    
  }
 }
