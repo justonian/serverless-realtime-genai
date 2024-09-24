@@ -113,7 +113,7 @@ export default function App() {
           columnStart="2"
           columnEnd="3"
         >
-          <Heading level={1}>Bedrock chat App</Heading>
+          <Heading level={1}>Bedrock Real-Time Chat</Heading>
         </Card>
         <Card
           columnStart="1"

@@ -10,6 +10,7 @@ It is a CDK Project written in typescript that uses AppSync/Cognito/Bedrock/Lamb
 
 A react project that interacts with the backend using GraphQL
 
+## Deployment
 
 ```
 # To deploy, run in the backend folder
