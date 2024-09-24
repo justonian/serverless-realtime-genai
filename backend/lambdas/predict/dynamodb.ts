@@ -1,6 +1,9 @@
 import { UpdateItemCommand } from '@aws-sdk/client-dynamodb';
-import { dynamodbClient } from './clients';
 import { MessageSystemStatus } from './types';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import * as AWSXRay from 'aws-xray-sdk';
+
+const dynamodbClient = AWSXRay.captureAWSv3Client(new DynamoDBClient());
 
 export async function updateThreadStatus({
   userId,
