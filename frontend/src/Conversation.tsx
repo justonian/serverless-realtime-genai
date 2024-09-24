@@ -100,7 +100,6 @@ export default function Conversation({threadId }: {
     
     const form = new FormData(event.target as HTMLFormElement);
     let prompt =form.get("prompt") as string;
-    
     let messageResponse = await client.graphql({
       query: createMessageAsync,
       variables: {
@@ -108,7 +107,12 @@ export default function Conversation({threadId }: {
           threadId: conversation?.threadId || threadId,
           prompt,
     }}});
-    await getConversation();
+    setConversation({...conversation,
+         messages: [...conversation!.messages!, {
+            sender: "User",
+            message: prompt,
+            createdAt: new Date().toISOString()
+        }]} as Thread);
     setLastMessage("");
     console.log(messageResponse);
     event.target.reset();
@@ -152,6 +156,9 @@ export default function Conversation({threadId }: {
             <Divider />
               
               </ScrollView>
+              {loading &&
+            <Loader></Loader>
+            }
               <TextField
                 name="prompt"
                 placeholder="Ask me a question"
@@ -160,12 +167,11 @@ export default function Conversation({threadId }: {
                 variation="quiet"
                 required
               />
+              
               <Button type="submit" variation="primary">
               Submit
             </Button>
-            {loading &&
-            <Loader></Loader>
-            }
+            
           </View>
           
         

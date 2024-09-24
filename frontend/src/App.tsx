@@ -47,10 +47,11 @@ const client = generateClient({
 export default function App() {
   const [conversations, setConversations] = useState<Thread[]>([]);
   const [threadId, setThreadId] = useState("");
+  
 
 
   useEffect(() => {
-    setTimeout(getConversations, 1000);
+    getConversations();
   }, [threadId]);
 
   async function getConversations() {
@@ -142,7 +143,14 @@ export default function App() {
             </TableBody>
           </Table>
           </ScrollView>
-          <Button onClick={signOut}>Sign Out</Button>
+          <Button onClick={() => {
+            setConversations([]);
+            setThreadId("");
+            if (signOut) {
+              signOut();
+            }
+            
+          }}>Sign Out</Button>
         </Card>
         
                 <Card>
