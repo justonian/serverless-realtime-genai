@@ -69,7 +69,7 @@ export default function App() {
       query: createThread,
      });
     setThreadId(res.data.createThread.thread!.threadId);
-    console.log("Set conversation ID to ", res.data.createThread.thread!.threadId);
+    console.log("Created new conversation ID ", res.data.createThread.thread!.threadId);
     
     let messageResponse = await client.graphql({
       query: createMessageAsync,
@@ -89,7 +89,7 @@ export default function App() {
           threadId
         },
     }});
-
+    console.log("Deleted conversation ID to", threadId);
     getConversations();
   }
 
@@ -112,7 +112,7 @@ export default function App() {
           columnStart="2"
           columnEnd="3"
         >
-          <Heading level={1}>Bedrock Real-Time Chat</Heading>
+          <Heading level={1}>Serverless Real-Time Bedrock Chat</Heading>
         </Card>
         <Card
           columnStart="1"

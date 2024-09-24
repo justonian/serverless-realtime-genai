@@ -92,6 +92,7 @@ export default function Conversation({threadId }: {
   useEffect(() => {
     if (!threadId) return;
     getConversation();
+    console.log("Set conversation ID to", threadId);
     const subscription = createSubscription();
     return () => subscription.unsubscribe();
   }, [threadId]);
@@ -99,9 +100,6 @@ export default function Conversation({threadId }: {
   async function sendMessage(event: any) {
     event.preventDefault();
     setLoading(true);
-    
-    
-    
     const form = new FormData(event.target as HTMLFormElement);
     let prompt =form.get("prompt") as string;
     let messageResponse = await client.graphql({
@@ -130,7 +128,6 @@ export default function Conversation({threadId }: {
           threadId
         },
     }});
-
     setConversation(val.data.getThread!);
   }
 
