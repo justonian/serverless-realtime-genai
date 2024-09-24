@@ -9,6 +9,7 @@ import {
   Divider,
   Card,
   ScrollView,
+  Loader,
 } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 
@@ -72,6 +73,8 @@ export default function Conversation({threadId }: {
 
             if (response.chunkType === 'status' && response.status === 'COMPLETE') {
               setLoading(false);
+              setLastMessage(null);
+              getConversation();
             }
           }
         },
@@ -91,6 +94,7 @@ export default function Conversation({threadId }: {
 
   async function sendMessage(event: any) {
     event.preventDefault();
+    setLoading(true);
     
     
     
@@ -159,6 +163,9 @@ export default function Conversation({threadId }: {
               <Button type="submit" variation="primary">
               Submit
             </Button>
+            {loading &&
+            <Loader></Loader>
+            }
           </View>
           
         

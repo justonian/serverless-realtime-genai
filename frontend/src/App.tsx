@@ -2,31 +2,24 @@ import { useState, useEffect } from "react";
 import {
   Authenticator,
   Button,
-  Text,
   TextField,
   Heading,
-  Flex,
   View,
   Card,
   Grid,
-  Divider,
   Table,
-  TableHead,
   TableRow,
   TableCell,
   TableBody,
-  Icon,
   ScrollView,
 } from "@aws-amplify/ui-react";
 import { Amplify } from "aws-amplify";
 import "@aws-amplify/ui-react/styles.css";
-import { FiStar } from 'react-icons/fi';
 
 import { generateClient } from 'aws-amplify/data';
 import { createThread, createMessageAsync, deleteThread } from './graphql/mutations';
 import { getAllThreads } from './graphql/queries';
 import { Thread } from "./API";
-import { recieveMessageChunkAsync } from "./graphql/subscriptions";
 import Conversation from "./Conversation";
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
@@ -57,10 +50,10 @@ export default function App() {
 
 
   useEffect(() => {
-    fetchNotes();
+    setTimeout(getConversations, 1000);
   }, [threadId]);
 
-  async function fetchNotes() {
+  async function getConversations() {
     const conversations = await client.graphql({
       query: getAllThreads});
       console.log(conversations);
@@ -98,7 +91,7 @@ export default function App() {
         },
     }});
 
-    fetchNotes();
+    getConversations();
   }
 
    
@@ -112,7 +105,13 @@ export default function App() {
         templateRows="1fr 6fr 10fr">
         <Card
           columnStart="1"
-          columnEnd="-1"
+          columnEnd="2"
+        >
+          <Button variation="primary" onClick={() => setThreadId("")}>New Conversation</Button>
+        </Card>
+        <Card
+          columnStart="2"
+          columnEnd="3"
         >
           <Heading level={1}>Bedrock chat App</Heading>
         </Card>
