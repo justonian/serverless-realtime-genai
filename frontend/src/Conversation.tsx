@@ -39,6 +39,7 @@ export default function Conversation({threadId }: {
    */
    const createSubscription = () => {
     // Create subscription function
+    let count = 0;
     return client
       .graphql({
         query: recieveMessageChunkAsync,
@@ -50,6 +51,7 @@ export default function Conversation({threadId }: {
 
           if (response) {
             if (response.chunkType === 'text') {
+              console.log("Received response chunk ", count++);
               setLastMessage((prevMessage: any) => {
                 if (prevMessage) {
                   return {
@@ -75,6 +77,8 @@ export default function Conversation({threadId }: {
               setLoading(false);
               setLastMessage(null);
               getConversation();
+              console.log("Received final response chunk");
+              count = 0;
             }
           }
         },
@@ -107,6 +111,7 @@ export default function Conversation({threadId }: {
           threadId: conversation?.threadId || threadId,
           prompt,
     }}});
+    console.log("Sending message " + prompt + " to conversation ID " + conversation?.threadId || threadId);
     setConversation({...conversation,
          messages: [...conversation!.messages!, {
             sender: "User",
@@ -114,7 +119,6 @@ export default function Conversation({threadId }: {
             createdAt: new Date().toISOString()
         }]} as Thread);
     setLastMessage("");
-    console.log(messageResponse);
     event.target.reset();
   }
 

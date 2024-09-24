@@ -68,8 +68,8 @@ export default function App() {
     let res = await client.graphql({
       query: createThread,
      });
-    console.log(res);
     setThreadId(res.data.createThread.thread!.threadId);
+    console.log("Set conversation ID to ", res.data.createThread.thread!.threadId);
     
     let messageResponse = await client.graphql({
       query: createMessageAsync,
@@ -78,8 +78,6 @@ export default function App() {
           threadId: res.data.createThread.thread!.threadId,
           prompt: form.get("prompt") as string,
     }}});
-
-    console.log(messageResponse);
     event.target.reset();
   }
 
