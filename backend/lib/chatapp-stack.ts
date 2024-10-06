@@ -255,25 +255,25 @@ export class ChatappStack extends cdk.Stack {
     const createThreadFunction = createResolverFunction(
       'createThread',
       conversationHistoryDataSource,
-      '../resolvers/threads/create-thread.js'
+      '../resolvers/conversations/create-conversation.js'
     );
     const deleteThreadFunction = createResolverFunction(
       'deleteThread',
       conversationHistoryDataSource,
-      '../resolvers/threads/delete-thread.js'
+      '../resolvers/conversations/delete-conversation.js'
     );
     const getThreadFunction = createResolverFunction(
       'getThread',
       conversationHistoryDataSource,
-      '../resolvers/threads/get-thread.js'
+      '../resolvers/conversations/get-conversation.js'
     );
     const getAllThreadsFunction = createResolverFunction(
       'getAllThreads',
       conversationHistoryDataSource,
-      '../resolvers/threads/get-threads.js'
+      '../resolvers/conversations/get-conversations.js'
     );
     const threadSubscriptionFilter = appsync.Code.fromAsset(
-      path.join(__dirname, '../resolvers/threads/thread-filter.js')
+      path.join(__dirname, '../resolvers/conversations/conversation-filter.js')
     );
 
     // Predict
