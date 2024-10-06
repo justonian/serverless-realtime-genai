@@ -15,7 +15,7 @@
         "name" : "Query",
         "description" : " ############# QUERIES #####################",
         "fields" : [ {
-          "name" : "getThread",
+          "name" : "getConversation",
           "description" : null,
           "args" : [ {
             "name" : "input",
@@ -25,7 +25,7 @@
               "name" : null,
               "ofType" : {
                 "kind" : "INPUT_OBJECT",
-                "name" : "GetThreadInput",
+                "name" : "GetConversationInput",
                 "ofType" : null
               }
             },
@@ -33,13 +33,13 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "Thread",
+            "name" : "Conversation",
             "ofType" : null
           },
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "getAllThreads",
+          "name" : "getAllConversations",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -50,7 +50,7 @@
               "name" : null,
               "ofType" : {
                 "kind" : "OBJECT",
-                "name" : "Thread",
+                "name" : "Conversation",
                 "ofType" : null
               }
             }
@@ -64,10 +64,10 @@
         "possibleTypes" : null
       }, {
         "kind" : "OBJECT",
-        "name" : "Thread",
+        "name" : "Conversation",
         "description" : null,
         "fields" : [ {
-          "name" : "threadId",
+          "name" : "conversationId",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -124,7 +124,7 @@
             "name" : null,
             "ofType" : {
               "kind" : "ENUM",
-              "name" : "ThreadStatus",
+              "name" : "ConversationStatus",
               "ofType" : null
             }
           },
@@ -224,7 +224,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "ENUM",
-        "name" : "ThreadStatus",
+        "name" : "ConversationStatus",
         "description" : " ############# ENUMS #####################",
         "fields" : null,
         "inputFields" : null,
@@ -258,11 +258,11 @@
         "possibleTypes" : null
       }, {
         "kind" : "INPUT_OBJECT",
-        "name" : "GetThreadInput",
+        "name" : "GetConversationInput",
         "description" : " ############# INPUTS #####################",
         "fields" : null,
         "inputFields" : [ {
-          "name" : "threadId",
+          "name" : "conversationId",
           "description" : null,
           "type" : {
             "kind" : "NON_NULL",
@@ -283,12 +283,12 @@
         "name" : "Mutation",
         "description" : " ############# MUTATIONS #####################",
         "fields" : [ {
-          "name" : "createThread",
+          "name" : "createConversation",
           "description" : "  Creation",
           "args" : [ ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "CreateThreadPayload",
+            "name" : "CreateConversationPayload",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -318,7 +318,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "deleteThread",
+          "name" : "deleteConversation",
           "description" : "  Deletion",
           "args" : [ {
             "name" : "input",
@@ -328,7 +328,7 @@
               "name" : null,
               "ofType" : {
                 "kind" : "INPUT_OBJECT",
-                "name" : "DeleteThreadInput",
+                "name" : "DeleteConversationInput",
                 "ofType" : null
               }
             },
@@ -336,7 +336,7 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "DeleteThreadPayload",
+            "name" : "DeleteConversationPayload",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -372,15 +372,15 @@
         "possibleTypes" : null
       }, {
         "kind" : "OBJECT",
-        "name" : "CreateThreadPayload",
+        "name" : "CreateConversationPayload",
         "description" : " ############# PAYLOADS #####################",
         "fields" : [ {
-          "name" : "thread",
+          "name" : "conversation",
           "description" : null,
           "args" : [ ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "Thread",
+            "name" : "Conversation",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -416,7 +416,7 @@
         "description" : null,
         "fields" : null,
         "inputFields" : [ {
-          "name" : "threadId",
+          "name" : "conversationId",
           "description" : null,
           "type" : {
             "kind" : "NON_NULL",
@@ -447,15 +447,15 @@
         "possibleTypes" : null
       }, {
         "kind" : "OBJECT",
-        "name" : "DeleteThreadPayload",
+        "name" : "DeleteConversationPayload",
         "description" : null,
         "fields" : [ {
-          "name" : "thread",
+          "name" : "conversation",
           "description" : null,
           "args" : [ ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "Thread",
+            "name" : "Conversation",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -467,11 +467,11 @@
         "possibleTypes" : null
       }, {
         "kind" : "INPUT_OBJECT",
-        "name" : "DeleteThreadInput",
+        "name" : "DeleteConversationInput",
         "description" : null,
         "fields" : null,
         "inputFields" : [ {
-          "name" : "threadId",
+          "name" : "conversationId",
           "description" : null,
           "type" : {
             "kind" : "NON_NULL",
@@ -507,7 +507,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "threadId",
+          "name" : "conversationId",
           "description" : null,
           "args" : [ ],
           "type" : {
@@ -530,7 +530,7 @@
             "name" : null,
             "ofType" : {
               "kind" : "ENUM",
-              "name" : "ThreadStatus",
+              "name" : "ConversationStatus",
               "ofType" : null
             }
           },
@@ -590,7 +590,7 @@
           },
           "defaultValue" : null
         }, {
-          "name" : "threadId",
+          "name" : "conversationId",
           "description" : null,
           "type" : {
             "kind" : "NON_NULL",
@@ -610,7 +610,7 @@
             "name" : null,
             "ofType" : {
               "kind" : "ENUM",
-              "name" : "ThreadStatus",
+              "name" : "ConversationStatus",
               "ofType" : null
             }
           },
@@ -684,7 +684,7 @@
         "description" : null,
         "fields" : null,
         "inputFields" : [ {
-          "name" : "threadId",
+          "name" : "conversationId",
           "description" : null,
           "type" : {
             "kind" : "NON_NULL",

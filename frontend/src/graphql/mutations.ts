@@ -8,10 +8,10 @@ type GeneratedMutation<InputType, OutputType> = string & {
   __generatedMutationOutput: OutputType;
 };
 
-export const createThread = /* GraphQL */ `mutation CreateThread {
-  createThread {
-    thread {
-      threadId
+export const createConversation = /* GraphQL */ `mutation CreateConversation {
+  createConversation {
+    conversation {
+      conversationId
       userId
       status
       createdAt
@@ -21,8 +21,8 @@ export const createThread = /* GraphQL */ `mutation CreateThread {
   }
 }
 ` as GeneratedMutation<
-  APITypes.CreateThreadMutationVariables,
-  APITypes.CreateThreadMutation
+  APITypes.CreateConversationMutationVariables,
+  APITypes.CreateConversationMutation
 >;
 export const createMessageAsync = /* GraphQL */ `mutation CreateMessageAsync($input: CreateMessageInput!) {
   createMessageAsync(input: $input) {
@@ -39,10 +39,10 @@ export const createMessageAsync = /* GraphQL */ `mutation CreateMessageAsync($in
   APITypes.CreateMessageAsyncMutationVariables,
   APITypes.CreateMessageAsyncMutation
 >;
-export const deleteThread = /* GraphQL */ `mutation DeleteThread($input: DeleteThreadInput!) {
-  deleteThread(input: $input) {
-    thread {
-      threadId
+export const deleteConversation = /* GraphQL */ `mutation DeleteConversation($input: DeleteConversationInput!) {
+  deleteConversation(input: $input) {
+    conversation {
+      conversationId
       userId
       status
       createdAt
@@ -52,13 +52,13 @@ export const deleteThread = /* GraphQL */ `mutation DeleteThread($input: DeleteT
   }
 }
 ` as GeneratedMutation<
-  APITypes.DeleteThreadMutationVariables,
-  APITypes.DeleteThreadMutation
+  APITypes.DeleteConversationMutationVariables,
+  APITypes.DeleteConversationMutation
 >;
 export const systemSendMessageChunk = /* GraphQL */ `mutation SystemSendMessageChunk($input: SystemSendMessageChunkInput!) {
   systemSendMessageChunk(input: $input) {
     userId
-    threadId
+    conversationId
     status
     chunkType
     chunk

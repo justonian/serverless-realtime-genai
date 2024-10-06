@@ -17,9 +17,9 @@ import { Amplify } from "aws-amplify";
 import "@aws-amplify/ui-react/styles.css";
 
 import { generateClient } from 'aws-amplify/data';
-import { createThread, createMessageAsync, deleteThread } from './graphql/mutations';
-import { getAllThreads } from './graphql/queries';
-import { Thread } from "./API";
+import { createConversation, createMessageAsync, deleteConversation } from './graphql/mutations';
+import { getAllConversations } from './graphql/queries';
+import { Conversation } from "./API";
 import Conversation from "./Conversation";
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
@@ -45,20 +45,20 @@ const client = generateClient({
 });
 
 export default function App() {
-  const [conversations, setConversations] = useState<Thread[]>([]);
-  const [threadId, setThreadId] = useState("");
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [conversationId, setConversationId] = useState("");
   
 
 
   useEffect(() => {
     getConversations();
-  }, [threadId]);
+  }, [conversationId]);
 
   async function getConversations() {
     const conversations = await client.graphql({
-      query: getAllThreads});
+      query: getAllConversations});
       console.log(conversations);
-      setConversations(conversations.data.getAllThreads || []);
+      setConversations(conversations.data.getAllConversations || []);
   }
 
   async function createConversation(user: any, event: any) {
@@ -66,30 +66,30 @@ export default function App() {
     const form = new FormData(event.target);
     console.log(user);
     let res = await client.graphql({
-      query: createThread,
+      query: createConversation,
      });
-    setThreadId(res.data.createThread.thread!.threadId);
-    console.log("Created new conversation ID ", res.data.createThread.thread!.threadId);
+    setConversationId(res.data.createConversation.conversation!.conversationId);
+    console.log("Created new conversation ID ", res.data.createConversation.conversation!.conversationId);
     
     let messageResponse = await client.graphql({
       query: createMessageAsync,
       variables: {
         input: {
-          threadId: res.data.createThread.thread!.threadId,
+          conversationId: res.data.createConversation.conversation!.conversationId,
           prompt: form.get("prompt") as string,
     }}});
     event.target.reset();
   }
 
-  async function deleteConversation(threadId: string ) {
+  async function deleteConversation(conversationId: string ) {
     await client.graphql({
-      query: deleteThread,
+      query: deleteConversation,
       variables: {
         input: {
-          threadId
+          conversationId
         },
     }});
-    console.log("Deleted conversation ID to", threadId);
+    console.log("Deleted conversation ID to", conversationId);
     getConversations();
   }
 
@@ -106,7 +106,7 @@ export default function App() {
           columnStart="1"
           columnEnd="2"
         >
-          <Button variation="primary" onClick={() => setThreadId("")}>New Conversation</Button>
+          <Button variation="primary" onClick={() => setConversationId("")}>New Conversation</Button>
         </Card>
         <Card
           columnStart="2"
@@ -124,14 +124,14 @@ export default function App() {
             highlightOnHover={true}>
             <TableBody>
             {conversations.map((conversation) => (
-              <TableRow key={conversation.threadId}
-                onClick={() => setThreadId(conversation.threadId)}
+              <TableRow key={conversation.conversationId}
+                onClick={() => setConversationId(conversation.conversationId)}
               >
                 <TableCell>{conversation.messages!.length > 0 ? conversation.messages[0].message : ""}</TableCell>
                 <TableCell>
                 <Button
                   variation="destructive"
-                  onClick={() => deleteConversation(conversation.threadId)}
+                  onClick={() => deleteConversation(conversation.conversationId)}
                 >
                   X
                 </Button>
@@ -143,7 +143,7 @@ export default function App() {
           </ScrollView>
           <Button onClick={() => {
             setConversations([]);
-            setThreadId("");
+            setConversationId("");
             if (signOut) {
               signOut();
             }
@@ -152,10 +152,10 @@ export default function App() {
         </Card>
         
                 <Card>
-          {threadId &&  (
-                <Conversation threadId={threadId}/>
+          {conversationId &&  (
+                <Conversation conversationId={conversationId}/>
               )}
-           {!threadId && (
+           {!conversationId && (
           <View as="form" margin="3rem 0" onSubmit={(event) => createConversation(user, event)}>
                 <TextField
                 name="prompt"

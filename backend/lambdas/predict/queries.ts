@@ -7,13 +7,13 @@ const {
   } = process.env;
 
 /**
- * Sends a chunk to the all subscribers of the thread providing the thread's status, the chunk's order, type, and content.
+ * Sends a chunk to the all subscribers of the conversation providing the conversation's status, the chunk's order, type, and content.
  */
-const sendMessageChunkMutation = `mutation Mutation($userId: ID!, $threadId: ID!, $status: ThreadStatus!, $chunkType: String!, $chunk: String!) {
-  systemSendMessageChunk(input: {userId: $userId, threadId: $threadId, status: $status, chunkType: $chunkType, chunk: $chunk}) {
+const sendMessageChunkMutation = `mutation Mutation($userId: ID!, $conversationId: ID!, $status: ConversationStatus!, $chunkType: String!, $chunk: String!) {
+  systemSendMessageChunk(input: {userId: $userId, conversationId: $conversationId, status: $status, chunkType: $chunkType, chunk: $chunk}) {
         status
         userId
-        threadId
+        conversationId
         chunkType
         chunk
   }
@@ -44,13 +44,13 @@ async function sendRequest(
 
 export async function sendChunk({
   userId,
-  threadId,
+  conversationId,
   status,
   chunkType,
   chunk
 }: {
   userId: string;
-  threadId: string;
+  conversationId: string;
   status?: MessageSystemStatus;
   chunkType?: 'text' | 'audio' | 'image' | 'error' | 'status';
   chunk?: string;
@@ -61,7 +61,7 @@ export async function sendChunk({
 
   return (await sendRequest(sendMessageChunkMutation, {
     userId,
-    threadId,
+    conversationId,
     status,
     chunkType,
     chunk

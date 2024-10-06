@@ -209,7 +209,7 @@ export class ChatappStack extends cdk.Stack {
     );
 
     /*================================= Functions =================================*/
-    // These are the resolver functions that are type and field specific. e.g., createPersona, getThread, etc.
+    // These are the resolver functions that are type and field specific. e.g., createPersona, getConversation, etc.
 
     const createResolverFunction = (
       name: string,
@@ -250,29 +250,29 @@ export class ChatappStack extends cdk.Stack {
       return new appsync.AppsyncFunction(this, name, props);
     };
 
-    // Threads
+    // Conversations
 
-    const createThreadFunction = createResolverFunction(
-      'createThread',
+    const createConversationFunction = createResolverFunction(
+      'createConversation',
       conversationHistoryDataSource,
       '../resolvers/conversations/create-conversation.js'
     );
-    const deleteThreadFunction = createResolverFunction(
-      'deleteThread',
+    const deleteConversationFunction = createResolverFunction(
+      'deleteConversation',
       conversationHistoryDataSource,
       '../resolvers/conversations/delete-conversation.js'
     );
-    const getThreadFunction = createResolverFunction(
-      'getThread',
+    const getConversationFunction = createResolverFunction(
+      'getConversation',
       conversationHistoryDataSource,
       '../resolvers/conversations/get-conversation.js'
     );
-    const getAllThreadsFunction = createResolverFunction(
-      'getAllThreads',
+    const getAllConversationsFunction = createResolverFunction(
+      'getAllConversations',
       conversationHistoryDataSource,
       '../resolvers/conversations/get-conversations.js'
     );
-    const threadSubscriptionFilter = appsync.Code.fromAsset(
+    const conversationSubscriptionFilter = appsync.Code.fromAsset(
       path.join(__dirname, '../resolvers/conversations/conversation-filter.js')
     );
 
@@ -287,33 +287,33 @@ export class ChatappStack extends cdk.Stack {
     /*================================= Resolvers =================================*/
 
     const resolverConfigs = [
-      // Threads
+      // Conversations
       {
         typeName: 'Query',
-        fieldName: 'getThread',
-        pipelineConfig: [getThreadFunction]
+        fieldName: 'getConversation',
+        pipelineConfig: [getConversationFunction]
       },
       {
         typeName: 'Query',
-        fieldName: 'getAllThreads',
-        pipelineConfig: [getAllThreadsFunction]
+        fieldName: 'getAllConversations',
+        pipelineConfig: [getAllConversationsFunction]
       },
       {
         typeName: 'Mutation',
-        fieldName: 'createThread',
-        pipelineConfig: [createThreadFunction]
+        fieldName: 'createConversation',
+        pipelineConfig: [createConversationFunction]
       },
       {
         typeName: 'Mutation',
-        fieldName: 'deleteThread',
-        pipelineConfig: [deleteThreadFunction]
+        fieldName: 'deleteConversation',
+        pipelineConfig: [deleteConversationFunction]
       },
 
       // Messages
       {
         typeName: 'Mutation',
         fieldName: 'createMessageAsync',
-        pipelineConfig: [getThreadFunction, predictAsyncFunction],
+        pipelineConfig: [getConversationFunction, predictAsyncFunction],
       },
 
       // System
@@ -328,7 +328,7 @@ export class ChatappStack extends cdk.Stack {
         typeName: 'Subscription',
         fieldName: 'recieveMessageChunkAsync',
         runtime: appsync.FunctionRuntime.JS_1_0_0,
-        code: threadSubscriptionFilter,
+        code: conversationSubscriptionFilter,
         dataSource: noneDataSource
       }
     ];

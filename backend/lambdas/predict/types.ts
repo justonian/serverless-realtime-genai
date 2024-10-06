@@ -1,6 +1,6 @@
 export interface EventType {
     userId: string;
-    threadId: string;
+    conversationId: string;
     history: { sender: string; message: string }[];
     query: string;
     eventTimeout: number;

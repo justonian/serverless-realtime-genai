@@ -6,7 +6,7 @@ schema {
 
 ############## ENUMS #####################
 
-enum ThreadStatus {
+enum ConversationStatus {
   NEW
   PENDING
   PROCESSING
@@ -16,12 +16,12 @@ enum ThreadStatus {
 
 ############## INPUTS #####################
 
-input GetThreadInput {
-  threadId: ID!
+input GetConversationInput {
+  conversationId: ID!
 }
 
-input DeleteThreadInput {
-  threadId: ID!
+input DeleteConversationInput {
+  conversationId: ID!
 }
 
 input MessageInput {
@@ -30,29 +30,29 @@ input MessageInput {
 }
 
 input CreateMessageInput {
-  threadId: ID!
+  conversationId: ID!
   prompt: ID!
 }
 
 input SystemSendMessageChunkInput {
   userId: ID!
-  threadId: ID!
-  status: ThreadStatus!
+  conversationId: ID!
+  status: ConversationStatus!
 
   chunkType: String!
   chunk: String!
 }
 
 input RecieveMessageChunkAsyncInput {
-  threadId: ID!
+  conversationId: ID!
 }
 
 ############## TYPES #####################
 
 type MessageChunk @aws_cognito_user_pools @aws_iam {
   userId: ID!
-  threadId: ID!
-  status: ThreadStatus!
+  conversationId: ID!
+  status: ConversationStatus!
 
   chunkType: String!
   chunk: String!
@@ -64,47 +64,47 @@ type Message @aws_cognito_user_pools @aws_iam {
   createdAt: String!
 }
 
-type Thread @aws_cognito_user_pools @aws_iam {
-  threadId: ID!
+type Conversation @aws_cognito_user_pools @aws_iam {
+  conversationId: ID!
   userId: ID!
   messages: [Message!]
-  status: ThreadStatus!
+  status: ConversationStatus!
   createdAt: String!
 }
 
 ############## PAYLOADS #####################
 
-type CreateThreadPayload @aws_cognito_user_pools @aws_iam {
-  thread: Thread
+type CreateConversationPayload @aws_cognito_user_pools @aws_iam {
+  conversation: Conversation
 }
 
 type CreateMessagePayload @aws_cognito_user_pools @aws_iam {
   message: Message
 }
 
-type DeleteThreadPayload @aws_cognito_user_pools @aws_iam {
-  thread: Thread
+type DeleteConversationPayload @aws_cognito_user_pools @aws_iam {
+  conversation: Conversation
 }
 
 ############## QUERIES #####################
 
 type Query @aws_cognito_user_pools @aws_iam {
-  getThread(input: GetThreadInput!): Thread
-  getAllThreads: [Thread!]
+  getConversation(input: GetConversationInput!): Conversation
+  getAllConversations: [Conversation!]
 }
 
 ############## MUTATIONS #####################
 
 type Mutation {
   # Creation
-  createThread: CreateThreadPayload
+  createConversation: CreateConversationPayload
     @aws_cognito_user_pools
     @aws_iam
   createMessageAsync(input: CreateMessageInput!): CreateMessagePayload
     @aws_cognito_user_pools
 
   # Deletion
-  deleteThread(input: DeleteThreadInput!): DeleteThreadPayload
+  deleteConversation(input: DeleteConversationInput!): DeleteConversationPayload
     @aws_cognito_user_pools
     @aws_iam
 

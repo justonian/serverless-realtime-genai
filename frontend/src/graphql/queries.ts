@@ -8,9 +8,9 @@ type GeneratedQuery<InputType, OutputType> = string & {
   __generatedQueryOutput: OutputType;
 };
 
-export const getThread = /* GraphQL */ `query GetThread($input: GetThreadInput!) {
-  getThread(input: $input) {
-    threadId
+export const getConversation = /* GraphQL */ `query GetConversation($input: GetConversationInput!) {
+  getConversation(input: $input) {
+    conversationId
     userId
     messages {
       sender
@@ -23,10 +23,10 @@ export const getThread = /* GraphQL */ `query GetThread($input: GetThreadInput!)
     __typename
   }
 }
-` as GeneratedQuery<APITypes.GetThreadQueryVariables, APITypes.GetThreadQuery>;
-export const getAllThreads = /* GraphQL */ `query GetAllThreads {
-  getAllThreads {
-    threadId
+` as GeneratedQuery<APITypes.GetConversationQueryVariables, APITypes.GetConversationQuery>;
+export const getAllConversations = /* GraphQL */ `query GetAllConversations {
+  getAllConversations {
+    conversationId
     userId
     messages {
       sender
@@ -40,6 +40,6 @@ export const getAllThreads = /* GraphQL */ `query GetAllThreads {
   }
 }
 ` as GeneratedQuery<
-  APITypes.GetAllThreadsQueryVariables,
-  APITypes.GetAllThreadsQuery
+  APITypes.GetAllConversationsQueryVariables,
+  APITypes.GetAllConversationsQuery
 >;

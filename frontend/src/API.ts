@@ -2,17 +2,17 @@
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
 
-export type CreateThreadPayload = {
-  __typename: "CreateThreadPayload",
-  thread?: Thread | null,
+export type CreateConversationPayload = {
+  __typename: "CreateConversationPayload",
+  conversation?: Conversation | null,
 };
 
-export type Thread = {
-  __typename: "Thread",
-  threadId: string,
+export type Conversation = {
+  __typename: "Conversation",
+  conversationId: string,
   userId: string,
   messages?:  Array<Message > | null,
-  status: ThreadStatus,
+  status: ConversationStatus,
   createdAt: string,
 };
 
@@ -24,7 +24,7 @@ export type Message = {
 };
 
 // ############# ENUMS #####################
-export enum ThreadStatus {
+export enum ConversationStatus {
   NEW = "NEW",
   PENDING = "PENDING",
   PROCESSING = "PROCESSING",
@@ -34,7 +34,7 @@ export enum ThreadStatus {
 
 
 export type CreateMessageInput = {
-  threadId: string,
+  conversationId: string,
   prompt: string,
 };
 
@@ -43,19 +43,19 @@ export type CreateMessagePayload = {
   message?: Message | null,
 };
 
-export type DeleteThreadInput = {
-  threadId: string,
+export type DeleteConversationInput = {
+  conversationId: string,
 };
 
-export type DeleteThreadPayload = {
-  __typename: "DeleteThreadPayload",
-  thread?: Thread | null,
+export type DeleteConversationPayload = {
+  __typename: "DeleteConversationPayload",
+  conversation?: Conversation | null,
 };
 
 export type SystemSendMessageChunkInput = {
   userId: string,
-  threadId: string,
-  status: ThreadStatus,
+  conversationId: string,
+  status: ConversationStatus,
   chunkType: string,
   chunk: string,
 };
@@ -63,32 +63,32 @@ export type SystemSendMessageChunkInput = {
 export type MessageChunk = {
   __typename: "MessageChunk",
   userId: string,
-  threadId: string,
-  status: ThreadStatus,
+  conversationId: string,
+  status: ConversationStatus,
   chunkType: string,
   chunk: string,
 };
 
-export type GetThreadInput = {
-  threadId: string,
+export type GetConversationInput = {
+  conversationId: string,
 };
 
 export type RecieveMessageChunkAsyncInput = {
-  threadId: string,
+  conversationId: string,
 };
 
-export type CreateThreadMutationVariables = {
+export type CreateConversationMutationVariables = {
 };
 
-export type CreateThreadMutation = {
+export type CreateConversationMutation = {
   // Creation
-  createThread?:  {
-    __typename: "CreateThreadPayload",
-    thread?:  {
-      __typename: "Thread",
-      threadId: string,
+  createConversation?:  {
+    __typename: "CreateConversationPayload",
+    conversation?:  {
+      __typename: "Conversation",
+      conversationId: string,
       userId: string,
-      status: ThreadStatus,
+      status: ConversationStatus,
       createdAt: string,
     } | null,
   } | null,
@@ -110,19 +110,19 @@ export type CreateMessageAsyncMutation = {
   } | null,
 };
 
-export type DeleteThreadMutationVariables = {
-  input: DeleteThreadInput,
+export type DeleteConversationMutationVariables = {
+  input: DeleteConversationInput,
 };
 
-export type DeleteThreadMutation = {
+export type DeleteConversationMutation = {
   // Deletion
-  deleteThread?:  {
-    __typename: "DeleteThreadPayload",
-    thread?:  {
-      __typename: "Thread",
-      threadId: string,
+  deleteConversation?:  {
+    __typename: "DeleteConversationPayload",
+    conversation?:  {
+      __typename: "Conversation",
+      conversationId: string,
       userId: string,
-      status: ThreadStatus,
+      status: ConversationStatus,
       createdAt: string,
     } | null,
   } | null,
@@ -137,21 +137,21 @@ export type SystemSendMessageChunkMutation = {
   systemSendMessageChunk?:  {
     __typename: "MessageChunk",
     userId: string,
-    threadId: string,
-    status: ThreadStatus,
+    conversationId: string,
+    status: ConversationStatus,
     chunkType: string,
     chunk: string,
   } | null,
 };
 
-export type GetThreadQueryVariables = {
-  input: GetThreadInput,
+export type GetConversationQueryVariables = {
+  input: GetConversationInput,
 };
 
-export type GetThreadQuery = {
-  getThread?:  {
-    __typename: "Thread",
-    threadId: string,
+export type GetConversationQuery = {
+  getConversation?:  {
+    __typename: "Conversation",
+    conversationId: string,
     userId: string,
     messages?:  Array< {
       __typename: "Message",
@@ -159,18 +159,18 @@ export type GetThreadQuery = {
       message: string,
       createdAt: string,
     } > | null,
-    status: ThreadStatus,
+    status: ConversationStatus,
     createdAt: string,
   } | null,
 };
 
-export type GetAllThreadsQueryVariables = {
+export type GetAllConversationsQueryVariables = {
 };
 
-export type GetAllThreadsQuery = {
-  getAllThreads?:  Array< {
-    __typename: "Thread",
-    threadId: string,
+export type GetAllConversationsQuery = {
+  getAllConversations?:  Array< {
+    __typename: "Conversation",
+    conversationId: string,
     userId: string,
     messages?:  Array< {
       __typename: "Message",
@@ -178,7 +178,7 @@ export type GetAllThreadsQuery = {
       message: string,
       createdAt: string,
     } > | null,
-    status: ThreadStatus,
+    status: ConversationStatus,
     createdAt: string,
   } > | null,
 };
@@ -191,8 +191,8 @@ export type RecieveMessageChunkAsyncSubscription = {
   recieveMessageChunkAsync?:  {
     __typename: "MessageChunk",
     userId: string,
-    threadId: string,
-    status: ThreadStatus,
+    conversationId: string,
+    status: ConversationStatus,
     chunkType: string,
     chunk: string,
   } | null,

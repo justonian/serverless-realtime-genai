@@ -5,21 +5,21 @@ import * as AWSXRay from 'aws-xray-sdk';
 
 const dynamodbClient = AWSXRay.captureAWSv3Client(new DynamoDBClient());
 
-export async function updateThreadStatus({
+export async function updateConversationStatus({
   userId,
-  threadId,
+  conversationId,
   status,
   tableName
 }: {
   userId: string;
-  threadId: string;
+  conversationId: string;
   status: MessageSystemStatus;
   tableName: string;
 }) {
   return await dynamodbClient.send(
     new UpdateItemCommand({
       TableName: tableName,
-      Key: { pk: { S: `USER#${userId}` }, sk: { S: `THREAD#${threadId}` } },
+      Key: { pk: { S: `USER#${userId}` }, sk: { S: `THREAD#${conversationId}` } },
       UpdateExpression: 'SET #status = :status',
       ExpressionAttributeNames: {
         '#status': 'status'
@@ -33,14 +33,14 @@ export async function updateThreadStatus({
 
 export async function addMessage({
   id,
-  threadId,
+  conversationId,
   message,
   audioClips,
   sender,
   tableName
 }: {
   id: string;
-  threadId: string;
+  conversationId: string;
   message: string;
   audioClips?: string[];
   sender: string;
@@ -49,7 +49,7 @@ export async function addMessage({
   await dynamodbClient.send(
     new UpdateItemCommand({
       TableName: tableName,
-      Key: { pk: { S: `USER#${id}` }, sk: { S: `THREAD#${threadId}` } },
+      Key: { pk: { S: `USER#${id}` }, sk: { S: `THREAD#${conversationId}` } },
       UpdateExpression:
         'SET #messages = list_append(if_not_exists(#messages, :empty_list), :messages)',
       ExpressionAttributeNames: {

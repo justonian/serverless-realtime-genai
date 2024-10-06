@@ -11,7 +11,7 @@ type GeneratedSubscription<InputType, OutputType> = string & {
 export const recieveMessageChunkAsync = /* GraphQL */ `subscription RecieveMessageChunkAsync($input: RecieveMessageChunkAsyncInput!) {
   recieveMessageChunkAsync(input: $input) {
     userId
-    threadId
+    conversationId
     status
     chunkType
     chunk

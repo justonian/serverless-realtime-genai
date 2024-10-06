@@ -1,4 +1,4 @@
-import { addMessage, updateThreadStatus } from './dynamodb';
+import { addMessage, updateConversationStatus } from './dynamodb';
 import { EventType, MessageSystemStatus } from './types';
 import { sendChunk } from './queries';
 import { BedrockRuntimeClient, ConverseStreamCommand, Message } from "@aws-sdk/client-bedrock-runtime"; 
@@ -76,14 +76,14 @@ export function createTimeoutTask(
 /**
  * Processes a single event.
  * @param userId {string} The user ID.
- * @param threadId {string} The thread ID.
- * @param userPrompt {string} The full prompt to process. This includes the thread's system prompt, message history, user's prompt, and start of the AI's response.
+ * @param conversationId {string} The conversation ID.
+ * @param userPrompt {string} The full prompt to process. This includes the conversation's system prompt, message history, user's prompt, and start of the AI's response.
  * @param eventTimeout {number} The timeout for the event.
  * @returns {Promise<{ statusCode: number; message: string }>} The result of the event.
  */
 export async function processSingleEvent({
   userId,
-  threadId,
+  conversationId,
   history,
   query,
   eventTimeout,
@@ -121,7 +121,7 @@ export async function processSingleEvent({
       await Promise.all([
         addMessage({
           id: userId,
-          threadId,
+          conversationId,
           message: query,
           sender: 'User',
           tableName: TABLE_NAME
@@ -137,7 +137,7 @@ export async function processSingleEvent({
               console.log(`Received Text Chunk: ${chunk}`);
               await sendChunk({
                 userId,
-                threadId,
+                conversationId,
                 chunk: generatedText,
                 chunkType: 'text'
               });
@@ -149,7 +149,7 @@ export async function processSingleEvent({
               );
               await sendChunk({
                 userId,
-                threadId,
+                conversationId,
                 chunk: 'An error occurred while processing the prompt.',
                 chunkType: 'error'
               });
@@ -177,7 +177,7 @@ export async function processSingleEvent({
     generatedText = 'An error occurred while processing the prompt.';
     await sendChunk({
       userId,
-      threadId,
+      conversationId,
       chunk: 'An error occurred while processing the prompt.',
       chunkType: 'error'
     });
@@ -190,20 +190,20 @@ export async function processSingleEvent({
   await Promise.all([
     addMessage({
       id: userId,
-      threadId,
+      conversationId,
       message: generatedText,
       sender: 'Assistant',
       tableName: TABLE_NAME
     }),
-    updateThreadStatus({
+    updateConversationStatus({
       userId: userId,
-      threadId,
+      conversationId,
       status: MessageSystemStatus.COMPLETE,
       tableName: TABLE_NAME
     }),
     sendChunk({
       userId,
-      threadId,
+      conversationId,
       status: MessageSystemStatus.COMPLETE,
       chunkType: 'status'
     })

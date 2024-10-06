@@ -1,5 +1,5 @@
 import { AppSyncIdentityCognito, AppSyncResolverEvent } from 'aws-lambda';
-import { updateThreadStatus, addMessage} from './dynamodb';
+import { updateConversationStatus, addMessage} from './dynamodb';
 import { processSingleEvent } from './logic';
 import { MessageSystemStatus } from './types';
 
@@ -11,7 +11,7 @@ const {
 
 export async function handler(
   event: AppSyncResolverEvent<{
-    input: { prompt: string; threadId: string; includeAudio: boolean };
+    input: { prompt: string; conversationId: string; includeAudio: boolean };
   }>,
   context: any,
 ) {
@@ -31,7 +31,7 @@ export async function handler(
   }
   const id = (identity as AppSyncIdentityCognito).sub;
 
-  // Condition 2: The thread is not currently processing. If it is, throw an error.
+  // Condition 2: The conversation is not currently processing. If it is, throw an error.
   if (
     !id ||
     (prev?.result?.status &&
@@ -39,26 +39,26 @@ export async function handler(
         prev.result.status
       ))
   ) {
-    throw new Error('Thread is currently processing');
+    throw new Error('Conversation is currently processing');
   }
 
-  // Condition 3: The thread ID is missing.
-  let threadId = prev?.result?.sk;
-  if (!threadId) throw new Error('That thread does not exist');
-  threadId = threadId.split('#')[1];
+  // Condition 3: The conversation ID is missing.
+  let conversationId = prev?.result?.sk;
+  if (!conversationId) throw new Error('That conversation does not exist');
+  conversationId = conversationId.split('#')[1];
 
   try {
     // Inserts the user's request into the queue, and peforms the DynamoDB update in parallel.
     await Promise.all([
-      updateThreadStatus({
+      updateConversationStatus({
         userId: id,
-        threadId,
+        conversationId,
         status: MessageSystemStatus.PENDING,
         tableName: TABLE_NAME
       }),
       processSingleEvent({
         userId: id,
-        threadId: threadId,
+        conversationId: conversationId,
         history: prev?.result.messages || [],
         query: prompt,
         eventTimeout: context.getRemainingTimeInMillis(),

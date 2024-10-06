@@ -15,8 +15,8 @@ import "@aws-amplify/ui-react/styles.css";
 
 import { generateClient } from 'aws-amplify/data';
 import { createMessageAsync } from './graphql/mutations';
-import {  getThread } from './graphql/queries';
-import { Thread } from "./API";
+import {  getConversation } from './graphql/queries';
+import { Conversation } from "./API";
 import { recieveMessageChunkAsync } from "./graphql/subscriptions";
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
@@ -26,10 +26,10 @@ const client = generateClient({
   authMode: "userPool",
 });
 
-export default function Conversation({threadId }: {
-    threadId: string
+export default function Conversation({conversationId }: {
+    conversationId: string
 }) {
-  const [conversation, setConversation] = useState<Thread>();
+  const [conversation, setConversation] = useState<Conversation>();
   const [loading, setLoading] = useState(false);
   const [lastMessage, setLastMessage] = useState<any>();
 
@@ -43,7 +43,7 @@ export default function Conversation({threadId }: {
     return client
       .graphql({
         query: recieveMessageChunkAsync,
-        variables: { input: { threadId } }
+        variables: { input: { conversationId } }
       })
       .subscribe({
         next: ({ data }) => {
@@ -90,12 +90,12 @@ export default function Conversation({threadId }: {
   };
 
   useEffect(() => {
-    if (!threadId) return;
+    if (!conversationId) return;
     getConversation();
-    console.log("Set conversation ID to", threadId);
+    console.log("Set conversation ID to", conversationId);
     const subscription = createSubscription();
     return () => subscription.unsubscribe();
-  }, [threadId]);
+  }, [conversationId]);
 
   async function sendMessage(event: any) {
     event.preventDefault();
@@ -106,29 +106,29 @@ export default function Conversation({threadId }: {
       query: createMessageAsync,
       variables: {
         input: {
-          threadId: conversation?.threadId || threadId,
+          conversationId: conversation?.conversationId || conversationId,
           prompt,
     }}});
-    console.log("Sending message " + prompt + " to conversation ID " + conversation?.threadId || threadId);
+    console.log("Sending message " + prompt + " to conversation ID " + conversation?.conversationId || conversationId);
     setConversation({...conversation,
          messages: [...conversation!.messages!, {
             sender: "User",
             message: prompt,
             createdAt: new Date().toISOString()
-        }]} as Thread);
+        }]} as Conversation);
     setLastMessage("");
     event.target.reset();
   }
 
   async function getConversation( ) {
     let val = await client.graphql({
-      query: getThread,
+      query: getConversation,
       variables: {
         input: {
-          threadId
+          conversationId
         },
     }});
-    setConversation(val.data.getThread!);
+    setConversation(val.data.getConversation!);
   }
 
    
