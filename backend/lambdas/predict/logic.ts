@@ -138,7 +138,7 @@ export async function processSingleEvent({
               await sendChunk({
                 userId,
                 conversationId,
-                chunk: generatedText,
+                chunk,
                 chunkType: 'text'
               });
 

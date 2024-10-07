@@ -49,12 +49,12 @@ export default function ConversationElement({conversationId }: {
 
           if (response) {
             if (response.chunkType === 'text') {
-              console.log("Received response chunk ", count++);
+              console.log("Received response chunk ", count++, response.chunk);
               setLastMessage((prevMessage: any) => {
                 if (prevMessage) {
                   return {
                     ...prevMessage,
-                    message: response.chunk
+                    message: prevMessage.message + response.chunk
                   };
                 }
                 return {

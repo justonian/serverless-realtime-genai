@@ -68,6 +68,7 @@ export default function App() {
     let res = await client.graphql({
       query: createConversation,
      });
+     console.log(res.data);
     setConversationId(res.data.createConversation.conversation!.conversationId);
     console.log("Created new conversation ID ", res.data.createConversation.conversation!.conversationId);
     

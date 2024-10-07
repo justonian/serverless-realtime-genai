@@ -1,17 +1,17 @@
 import { util } from '@aws-appsync/utils';
 
 /**
- * Deletes a thread that belongs to the user from the DynamoDB table.
+ * Deletes a conversation that belongs to the user from the DynamoDB table.
  */
 export function request(ctx) {
   const userId = ctx.identity.sub;
-  const id = ctx.arguments.input.threadId;
+  const id = ctx.arguments.input.conversationId;
 
   return {
     operation: 'DeleteItem',
     key: util.dynamodb.toMapValues({
       pk: `USER#${userId}`,
-      sk: `THREAD#${id}`
+      sk: `CONVERSATION#${id}`
     })
   };
 }
@@ -24,8 +24,8 @@ export function response(ctx) {
     util.error(ctx.error.message, ctx.error.type);
   }
   return {
-    thread: {
-      threadId: ctx.result.sk.split('#')[1],
+    conversation: {
+      conversationId: ctx.result.sk.split('#')[1],
       userId: ctx.result.pk.split('#')[1],
       ...ctx.result
     }

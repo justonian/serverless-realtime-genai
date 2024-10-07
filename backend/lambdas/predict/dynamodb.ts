@@ -19,7 +19,7 @@ export async function updateConversationStatus({
   return await dynamodbClient.send(
     new UpdateItemCommand({
       TableName: tableName,
-      Key: { pk: { S: `USER#${userId}` }, sk: { S: `THREAD#${conversationId}` } },
+      Key: { pk: { S: `USER#${userId}` }, sk: { S: `CONVERSATION#${conversationId}` } },
       UpdateExpression: 'SET #status = :status',
       ExpressionAttributeNames: {
         '#status': 'status'
@@ -35,21 +35,19 @@ export async function addMessage({
   id,
   conversationId,
   message,
-  audioClips,
   sender,
   tableName
 }: {
   id: string;
   conversationId: string;
   message: string;
-  audioClips?: string[];
   sender: string;
   tableName: string;
 }) {
   await dynamodbClient.send(
     new UpdateItemCommand({
       TableName: tableName,
-      Key: { pk: { S: `USER#${id}` }, sk: { S: `THREAD#${conversationId}` } },
+      Key: { pk: { S: `USER#${id}` }, sk: { S: `CONVERSATION#${conversationId}` } },
       UpdateExpression:
         'SET #messages = list_append(if_not_exists(#messages, :empty_list), :messages)',
       ExpressionAttributeNames: {
@@ -62,9 +60,6 @@ export async function addMessage({
               M: {
                 sender: { S: sender },
                 message: { S: message },
-                audioClips: {
-                  L: (audioClips || []).map((clip) => ({ S: clip }))
-                },
                 createdAt: { S: new Date().toISOString() }
               }
             }

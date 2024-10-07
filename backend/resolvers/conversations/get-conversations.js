@@ -1,7 +1,7 @@
 import { util } from '@aws-appsync/utils';
 
 /**
- * Gets all threads from the DynamoDB table that belong to the user.
+ * Gets all conversations from the DynamoDB table that belong to the user.
  */
 export function request(ctx) {
   const id = ctx.identity.sub;
@@ -22,7 +22,7 @@ export function response(ctx) {
     util.error(ctx.error.message, ctx.error.type);
   }
   return ctx.result.items.map((item) => ({
-    threadId: item.sk.split('#')[1],
+    conversationId: item.sk.split('#')[1],
     userId: item.pk.split('#')[1],
     ...item
   }));

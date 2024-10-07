@@ -1,17 +1,17 @@
 import { util } from '@aws-appsync/utils';
 
 /**
- * Creates a new thread in the DynamoDB table.
+ * Creates a new conversation in the DynamoDB table.
  */
 export function request(ctx) {
-  // Generates a random ID for the thread item
+  // Generates a random ID for the conversation item
   const id = util.autoId();
 
   return {
     operation: 'UpdateItem',
     key: util.dynamodb.toMapValues({
       pk: `USER#${ctx.identity.sub}`,
-      sk: `THREAD#${id}`
+      sk: `CONVERSATION#${id}`
     }),
     update: {
       expression:
@@ -33,15 +33,15 @@ export function request(ctx) {
 }
 
 /**
- * Returns the thread or throws an error if the operation failed
+ * Returns the conversation or throws an error if the operation failed
  */
 export function response(ctx) {
   if (ctx.error) {
     util.error(ctx.error.message, ctx.error.type);
   }
   return {
-    thread: {
-      threadId: ctx.result.sk.split('#')[1],
+    conversation: {
+      conversationId: ctx.result.sk.split('#')[1],
       userId: ctx.result.pk.split('#')[1],
       ...ctx.result
     }
