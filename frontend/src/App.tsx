@@ -20,7 +20,7 @@ import { generateClient } from 'aws-amplify/data';
 import { createConversation, createMessageAsync, deleteConversation } from './graphql/mutations';
 import { getAllConversations } from './graphql/queries';
 import { Conversation } from "./API";
-import Conversation from "./Conversation";
+import ConversationElement from "./ConversationElement";
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
  */
@@ -28,15 +28,15 @@ import Conversation from "./Conversation";
 Amplify.configure({
   Auth: {
     Cognito: {
-      userPoolId: "us-east-1_w57eaVg3j",
-      userPoolClientId: "1qbg8ga9h3dldtahtk8ne33f44",
+      userPoolId: "us-east-1_uDGV2jbfJ",
+      userPoolClientId: "15mj3s3rsqc7fu7d42t24lv32f",
     }
   },
   API: {
     GraphQL: {
       defaultAuthMode: "userPool",
       region: "us-east-1",
-      endpoint: "https://cdd2l2oytbb3jifi32s6udysfi.appsync-api.us-east-1.amazonaws.com/graphql"
+      endpoint: "https://eyths4xeavgcrklbowtpbr3dlm.appsync-api.us-east-1.amazonaws.com/graphql"
     }
   }
 });
@@ -61,7 +61,7 @@ export default function App() {
       setConversations(conversations.data.getAllConversations || []);
   }
 
-  async function createConversation(user: any, event: any) {
+  async function handleCreateConversation(user: any, event: any) {
     event.preventDefault();
     const form = new FormData(event.target);
     console.log(user);
@@ -78,10 +78,11 @@ export default function App() {
           conversationId: res.data.createConversation.conversation!.conversationId,
           prompt: form.get("prompt") as string,
     }}});
+    console.log("Created new message ID ", messageResponse.data.createMessageAsync.message!.message);
     event.target.reset();
   }
 
-  async function deleteConversation(conversationId: string ) {
+  async function handleDeleteConversation(conversationId: string ) {
     await client.graphql({
       query: deleteConversation,
       variables: {
@@ -127,11 +128,11 @@ export default function App() {
               <TableRow key={conversation.conversationId}
                 onClick={() => setConversationId(conversation.conversationId)}
               >
-                <TableCell>{conversation.messages!.length > 0 ? conversation.messages[0].message : ""}</TableCell>
+                <TableCell>{(conversation.messages ?? []).length > 0 ? conversation!.messages![0].message : ""}</TableCell>
                 <TableCell>
                 <Button
                   variation="destructive"
-                  onClick={() => deleteConversation(conversation.conversationId)}
+                  onClick={() => handleDeleteConversation(conversation.conversationId)}
                 >
                   X
                 </Button>
@@ -153,10 +154,10 @@ export default function App() {
         
                 <Card>
           {conversationId &&  (
-                <Conversation conversationId={conversationId}/>
+                <ConversationElement conversationId={conversationId}/>
               )}
            {!conversationId && (
-          <View as="form" margin="3rem 0" onSubmit={(event) => createConversation(user, event)}>
+          <View as="form" margin="3rem 0" onSubmit={(event) => handleCreateConversation(user, event)}>
                 <TextField
                 name="prompt"
                 placeholder="Ask me a question"

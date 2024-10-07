@@ -3,11 +3,9 @@ import {
   Button,
   Text,
   TextField,
-  Heading,
   Flex,
   View,
   Divider,
-  Card,
   ScrollView,
   Loader,
 } from "@aws-amplify/ui-react";
@@ -15,7 +13,7 @@ import "@aws-amplify/ui-react/styles.css";
 
 import { generateClient } from 'aws-amplify/data';
 import { createMessageAsync } from './graphql/mutations';
-import {  getConversation } from './graphql/queries';
+import { getConversation } from './graphql/queries';
 import { Conversation } from "./API";
 import { recieveMessageChunkAsync } from "./graphql/subscriptions";
 /**
@@ -26,7 +24,7 @@ const client = generateClient({
   authMode: "userPool",
 });
 
-export default function Conversation({conversationId }: {
+export default function ConversationElement({conversationId }: {
     conversationId: string
 }) {
   const [conversation, setConversation] = useState<Conversation>();
@@ -76,7 +74,7 @@ export default function Conversation({conversationId }: {
             if (response.chunkType === 'status' && response.status === 'COMPLETE') {
               setLoading(false);
               setLastMessage(null);
-              getConversation();
+              getConversationData();
               console.log("Received final response chunk");
               count = 0;
             }
@@ -91,7 +89,7 @@ export default function Conversation({conversationId }: {
 
   useEffect(() => {
     if (!conversationId) return;
-    getConversation();
+    getConversationData();
     console.log("Set conversation ID to", conversationId);
     const subscription = createSubscription();
     return () => subscription.unsubscribe();
@@ -109,7 +107,7 @@ export default function Conversation({conversationId }: {
           conversationId: conversation?.conversationId || conversationId,
           prompt,
     }}});
-    console.log("Sending message " + prompt + " to conversation ID " + conversation?.conversationId || conversationId);
+    console.log("Sending message " + prompt + " to conversation ID " + conversation?.conversationId || conversationId, messageResponse.data.createMessageAsync.message?.sender);
     setConversation({...conversation,
          messages: [...conversation!.messages!, {
             sender: "User",
@@ -120,7 +118,7 @@ export default function Conversation({conversationId }: {
     event.target.reset();
   }
 
-  async function getConversation( ) {
+  async function getConversationData( ) {
     let val = await client.graphql({
       query: getConversation,
       variables: {
