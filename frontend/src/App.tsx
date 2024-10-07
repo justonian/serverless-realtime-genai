@@ -47,6 +47,7 @@ const client = generateClient({
 export default function App() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [conversationId, setConversationId] = useState("");
+  const [prompt, setPrompt] = useState("");
   
 
 
@@ -70,17 +71,19 @@ export default function App() {
      });
      console.log(res.data);
     setConversationId(res.data.createConversation.conversation!.conversationId);
+    setPrompt(form.get("prompt") as string);
     console.log("Created new conversation ID ", res.data.createConversation.conversation!.conversationId);
     
-    let messageResponse = await client.graphql({
+    await client.graphql({
       query: createMessageAsync,
       variables: {
         input: {
           conversationId: res.data.createConversation.conversation!.conversationId,
           prompt: form.get("prompt") as string,
     }}});
-    console.log("Created new message ID ", messageResponse.data.createMessageAsync.message!.message);
+
     event.target.reset();
+    getConversations();
   }
 
   async function handleDeleteConversation(conversationId: string ) {
@@ -127,7 +130,10 @@ export default function App() {
             <TableBody>
             {conversations.map((conversation) => (
               <TableRow key={conversation.conversationId}
-                onClick={() => setConversationId(conversation.conversationId)}
+                onClick={() => {
+                  setConversationId(conversation.conversationId);
+                  setPrompt(conversation.messages![0].message);
+                }}
               >
                 <TableCell>{(conversation.messages ?? []).length > 0 ? conversation!.messages![0].message : ""}</TableCell>
                 <TableCell>
@@ -155,7 +161,7 @@ export default function App() {
         
                 <Card>
           {conversationId &&  (
-                <ConversationElement conversationId={conversationId}/>
+                <ConversationElement conversationId={conversationId} prompt={prompt}/>
               )}
            {!conversationId && (
           <View as="form" margin="3rem 0" onSubmit={(event) => handleCreateConversation(user, event)}>

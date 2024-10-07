@@ -24,10 +24,14 @@ const client = generateClient({
   authMode: "userPool",
 });
 
-export default function ConversationElement({conversationId }: {
-    conversationId: string
+export default function ConversationElement({conversationId, prompt }: {
+    conversationId: string,
+    prompt: string
 }) {
-  const [conversation, setConversation] = useState<Conversation>();
+  const [conversation, setConversation] = useState<Conversation>({
+    conversationId: conversationId,
+    messages: [{sender: "User", message: prompt, createdAt: new Date().toISOString()}]
+  } as Conversation);
   const [loading, setLoading] = useState(false);
   const [lastMessage, setLastMessage] = useState<any>();
 
@@ -54,12 +58,12 @@ export default function ConversationElement({conversationId }: {
                 if (prevMessage) {
                   return {
                     ...prevMessage,
-                    message: prevMessage.message + response.chunk
+                    message: prevMessage.message + (response.chunk || ''),
                   };
                 }
                 return {
                   sender: 'Assistant',
-                  message: response.chunk,
+                  message: response.chunk || '',
                   createdAt: new Date().toISOString()
                 };
               });
@@ -73,8 +77,6 @@ export default function ConversationElement({conversationId }: {
 
             if (response.chunkType === 'status' && response.status === 'COMPLETE') {
               setLoading(false);
-              setLastMessage(null);
-              getConversationData();
               console.log("Received final response chunk");
               count = 0;
             }
@@ -95,11 +97,34 @@ export default function ConversationElement({conversationId }: {
     return () => subscription.unsubscribe();
   }, [conversationId]);
 
+  // Once loaded, append lastMessage and clear lastMessage
+  useEffect(() => { 
+    if (loading == false) {
+      let messages = conversation?.messages || [];
+      messages = [...messages];
+      messages.push({...lastMessage});
+      setConversation({...conversation,
+        messages} as Conversation);
+      setLastMessage({sender: 'Assistant', message: ''});
+    }
+
+  }, [loading]);
+
   async function sendMessage(event: any) {
     event.preventDefault();
     setLoading(true);
+    
     const form = new FormData(event.target as HTMLFormElement);
     let prompt =form.get("prompt") as string;
+    let messages = conversation?.messages || [];
+    messages.push({
+        sender: "User",
+        message: prompt,
+        createdAt: new Date().toISOString()
+    } as any);
+    setConversation({...conversation,
+      messages,} as Conversation);
+     console.log(conversation);
     let messageResponse = await client.graphql({
       query: createMessageAsync,
       variables: {
@@ -107,14 +132,8 @@ export default function ConversationElement({conversationId }: {
           conversationId: conversation?.conversationId || conversationId,
           prompt,
     }}});
-    console.log("Sending message " + prompt + " to conversation ID " + conversation?.conversationId || conversationId, messageResponse.data.createMessageAsync.message?.sender);
-    setConversation({...conversation,
-         messages: [...conversation!.messages!, {
-            sender: "User",
-            message: prompt,
-            createdAt: new Date().toISOString()
-        }]} as Conversation);
-    setLastMessage("");
+    console.log("Sending message " + prompt + " to conversation ID " + conversation?.conversationId || conversationId);
+
     event.target.reset();
   }
 
@@ -126,6 +145,7 @@ export default function ConversationElement({conversationId }: {
           conversationId
         },
     }});
+    console.log("Getting data", val.data.getConversation);
     setConversation(val.data.getConversation!);
   }
 
@@ -137,11 +157,16 @@ export default function ConversationElement({conversationId }: {
             <ScrollView width="100%" height="600px" maxWidth="1080px">
               {conversation && conversation.messages && (
                 <View>
+                  <Flex>
+                  <Text>{"User"}</Text>
+                  <Text>{prompt}</Text>
+                  </Flex>
                   {conversation.messages!.map((message, index) => (
+                    index > 0 && (
                     <Flex key={index} direction="row" alignItems="center" margin="1rem 0">
                       <Text>{message.sender}</Text>
                       <Text>{message.message}</Text>
-                    </Flex>
+                    </Flex>)
                   ))}
                   {lastMessage && lastMessage.message && (
                   <Flex>
