@@ -21,6 +21,8 @@ import { createConversation, createMessageAsync, deleteConversation } from './gr
 import { getAllConversations } from './graphql/queries';
 import { Conversation } from "./API";
 import ConversationElement from "./ConversationElement";
+import * as CdkData from "./cdk-outputs.json";
+
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
  */
@@ -28,15 +30,15 @@ import ConversationElement from "./ConversationElement";
 Amplify.configure({
   Auth: {
     Cognito: {
-      userPoolId: "us-east-1_uDGV2jbfJ",
-      userPoolClientId: "15mj3s3rsqc7fu7d42t24lv32f",
+      userPoolId: CdkData.ChatappStack.UserPoolId,
+      userPoolClientId: CdkData.ChatappStack.UserPoolClientId,
     }
   },
   API: {
     GraphQL: {
       defaultAuthMode: "userPool",
       region: "us-east-1",
-      endpoint: "https://eyths4xeavgcrklbowtpbr3dlm.appsync-api.us-east-1.amazonaws.com/graphql"
+      endpoint: CdkData.ChatappStack.GraphQLAPIURL
     }
   }
 });

@@ -15,7 +15,7 @@ A react project that interacts with the backend using GraphQL
 ```
 # To deploy, run in the backend folder
 npm i
-cdk deploy
+npm run deploy
 # It will output three variables, that need to be written on the Frontend in the file App.tsx
 # To run the frontend run in that folder
 npm i

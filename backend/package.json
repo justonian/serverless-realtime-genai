@@ -8,7 +8,8 @@
     "build": "./node_modules/typescript/bin/tsc",
     "watch": "./node_modules/typescript/bin/tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "deploy": "cdk deploy --outputs-file ../frontend/src/cdk-outputs.json"
   },
   "dependencies": {
     "@aws-amplify/cdk-exported-backend": "^0.0.6",
