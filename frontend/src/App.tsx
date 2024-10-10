@@ -55,7 +55,7 @@ export default function App() {
 
   useEffect(() => {
     getConversations();
-  }, [conversationId]);
+  }, []);
 
   async function getConversations() {
     const conversations = await client.graphql({
@@ -72,10 +72,14 @@ export default function App() {
       query: createConversation,
      });
      console.log(res.data);
+     const prompt = form.get("prompt") as string;
     setConversationId(res.data.createConversation.conversation!.conversationId);
-    setPrompt(form.get("prompt") as string);
+    setPrompt(prompt);
     console.log("Created new conversation ID ", res.data.createConversation.conversation!.conversationId);
-    
+    setConversations([...conversations, {
+      conversationId: res.data.createConversation.conversation!.conversationId,
+      messages:
+      [{sender: "User", message: prompt} ]} as Conversation]);
     await client.graphql({
       query: createMessageAsync,
       variables: {
@@ -85,7 +89,6 @@ export default function App() {
     }}});
 
     event.target.reset();
-    getConversations();
   }
 
   async function handleDeleteConversation(conversationId: string ) {
