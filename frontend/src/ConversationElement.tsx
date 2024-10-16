@@ -42,6 +42,7 @@ export default function ConversationElement({conversationId, prompt }: {
    const createSubscription = () => {
     // Create subscription function
     let count = 0;
+    let currentMessage : any = {};
     return client
       .graphql({
         query: recieveMessageChunkAsync,
@@ -56,17 +57,20 @@ export default function ConversationElement({conversationId, prompt }: {
               console.log("Received response chunk ", count++, response.chunk);
               setLastMessage((prevMessage: any) => {
                 if (prevMessage) {
-                  return {
+                  currentMessage = {
                     ...prevMessage,
                     message: prevMessage.message + (response.chunk || ''),
                   };
+                } else {
+                    currentMessage = {
+                    sender: 'Assistant',
+                    message: response.chunk || '',
+                    createdAt: new Date().toISOString()
+                  };
                 }
-                return {
-                  sender: 'Assistant',
-                  message: response.chunk || '',
-                  createdAt: new Date().toISOString()
-                };
+                return currentMessage;
               });
+              
             }
 
             // Error chunk
@@ -77,8 +81,11 @@ export default function ConversationElement({conversationId, prompt }: {
 
             if (response.chunkType === 'status' && response.status === 'COMPLETE') {
               setLoading(false);
-              console.log("Received final response chunk");
+              console.log("Received final response chunk", currentMessage);
               count = 0;
+              currentMessage = {};
+              setConversation({...conversation, messages: [...(conversation.messages || []), currentMessage]});
+              setLastMessage({});
             }
           }
         },
@@ -91,6 +98,7 @@ export default function ConversationElement({conversationId, prompt }: {
 
   useEffect(() => {
     if (!conversationId) return;
+    setLastMessage({});
     getConversationData();
     console.log("Set conversation ID to", conversationId);
     const subscription = createSubscription();
@@ -115,16 +123,17 @@ export default function ConversationElement({conversationId, prompt }: {
     setLoading(true);
     
     const form = new FormData(event.target as HTMLFormElement);
-    let prompt =form.get("prompt") as string;
+    let userPrompt =form.get("prompt") as string;
     let messages = conversation?.messages || [];
     messages.push({
         sender: "User",
-        message: prompt,
+        message: userPrompt,
         createdAt: new Date().toISOString()
     } as any);
     setConversation({...conversation,
       messages,} as Conversation);
-     console.log(conversation);
+     console.log("messages after", messages);
+    
     let messageResponse = await client.graphql({
       query: createMessageAsync,
       variables: {
