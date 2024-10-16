@@ -38,6 +38,7 @@ export class ChatappStack extends cdk.Stack {
         origin: origins.S3BucketOrigin.withOriginAccessControl(websiteBucket),
         cachePolicy: CacheDisabledPolicy,
       },
+      defaultRootObject: 'index.html',
     });
 
     // Output the S3 bucket name
