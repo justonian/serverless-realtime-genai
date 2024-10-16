@@ -14,7 +14,6 @@ import "@aws-amplify/ui-react/styles.css";
 import { generateClient } from 'aws-amplify/data';
 import { createMessageAsync } from './graphql/mutations';
 import { getConversation } from './graphql/queries';
-import { Conversation } from "./API";
 import { recieveMessageChunkAsync } from "./graphql/subscriptions";
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
