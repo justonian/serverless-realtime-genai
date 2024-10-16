@@ -1,5 +1,6 @@
 import * as cdk from "aws-cdk-lib";
 import * as path from "path";
+import * as s3 from "aws-cdk-lib/aws-s3";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as awsCognito from "aws-cdk-lib/aws-cognito";
 import * as appsync from 'aws-cdk-lib/aws-appsync';
@@ -9,11 +10,45 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import { Tracing } from 'aws-cdk-lib/aws-lambda';
+import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 
 export class ChatappStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    // Create a CloudFront distribution and S3 bucket for hosting the web page
+    const websiteBucket = new s3.Bucket(this, 'ContentBucket', {
+      publicReadAccess: false,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production
+      autoDeleteObjects: true, // NOT recommended for production
+    });
+
+    const CacheDisabledPolicy = new cloudfront.CachePolicy(this, 'myCachePolicy', {
+      cachePolicyName: 'Cache-Disabled-Policy',
+      comment: 'Cache policy with caching disabled',
+      defaultTtl: cdk.Duration.days(0),
+      minTtl: cdk.Duration.minutes(0),
+      maxTtl: cdk.Duration.days(0),
+    });
+    let cf = new cloudfront.Distribution(this, 'myDistCustomPolicy', {
+      defaultBehavior: {
+        origin: origins.S3BucketOrigin.withOriginAccessControl(websiteBucket),
+        cachePolicy: CacheDisabledPolicy,
+      },
+    });
+
+    // Output the S3 bucket name
+    new cdk.CfnOutput(this, 'WebsiteBucketName', {
+      value: websiteBucket.bucketName,
+    });
+
+    // Output the CloudFront distribution domain name
+    new cdk.CfnOutput(this, 'CloudFrontDistributionDomainName', {
+      value: cf.distributionDomainName,
+    });
 
      // A Cognito User Pool
      const userPool = new cognito.UserPool(this, 'UserPool', {
@@ -30,9 +65,6 @@ export class ChatappStack extends cdk.Stack {
           mutable: true
         }
       },
-      // lambdaTriggers: {
-      //   preSignUp: this.presignupLambda
-      // }
     });
 
     // Create Admin User Group

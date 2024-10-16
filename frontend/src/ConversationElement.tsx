@@ -134,7 +134,7 @@ export default function ConversationElement({conversationId, prompt }: {
       messages,} as Conversation);
      console.log("messages after", messages);
     
-    let messageResponse = await client.graphql({
+    await client.graphql({
       query: createMessageAsync,
       variables: {
         input: {
