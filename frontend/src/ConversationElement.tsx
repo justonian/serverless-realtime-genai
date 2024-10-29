@@ -61,7 +61,7 @@ export default function ConversationElement({conversationId, prompt }: {
 
           if (response) {
             if (response.chunkType === 'text') {
-              console.log("Received response chunk ", count++, response.chunk);
+              console.log("Received response chunk ", count++);
               setLastMessage((prevMessage: any) => {
                 if (prevMessage) {
                   currentMessage = {
@@ -115,10 +115,11 @@ export default function ConversationElement({conversationId, prompt }: {
 
   // Once loaded, append lastMessage and clear lastMessage
   useEffect(() => { 
+    console.log("Loading", loading);
     if (lastMessage && lastMessage.message) {
       setMessages([...messages, {...lastMessage}]);
+      console.log(lastMessage);
       setLastMessage({sender: 'Assistant', message: ''});
-      console.log('messages', messages, loading);
     }
 
   }, [loading]);
@@ -128,14 +129,18 @@ export default function ConversationElement({conversationId, prompt }: {
   async function sendMessage(event: any) {
     event.preventDefault();
     setLoading(true);
-    
     const form = new FormData(event.target as HTMLFormElement);
     let userPrompt =form.get("prompt") as string;
-    setMessages([...messages,{
-        sender: "User",
-        message: userPrompt,
-        createdAt: new Date().toISOString()}]);
-     console.log("messages after", messages);
+    let msgs = [...messages];
+    if (lastMessage && lastMessage.message) {
+      msgs.push({...lastMessage});
+      setLastMessage({sender: 'Assistant', message: ''});
+    }
+    msgs.push({
+      sender: "User",
+      message: userPrompt,
+      createdAt: new Date().toISOString()});
+    setMessages(msgs);
     
     await client.graphql({
       query: createMessageAsync,
@@ -180,7 +185,7 @@ export default function ConversationElement({conversationId, prompt }: {
                   ))}
                   {lastMessage && lastMessage.message && (
                   <Flex>
-                  <Text>{lastMessage.sender}</Text>
+                  <Text>{lastMessage.sender}:</Text>
                   <Text>{lastMessage.message}</Text>
                   </Flex>
                   )}
