@@ -40,6 +40,7 @@ export default function ConversationElement({conversationId, prompt }: {
     message: ''
   });
   const [messages, setMessages] = useState<ChatMessage[]>([initialMessage]);
+  
 
    /**
    * Creates a subscription to recieve messages from the chatbot.
@@ -65,7 +66,7 @@ export default function ConversationElement({conversationId, prompt }: {
                 if (prevMessage) {
                   currentMessage = {
                     ...prevMessage,
-                    message: prevMessage.message + (response.chunk || ''),
+                    message: (response.chunk || ''),
                   };
                 } else {
                     currentMessage = {
@@ -157,7 +158,8 @@ export default function ConversationElement({conversationId, prompt }: {
         },
     }});
     console.log("Getting data", val.data.getConversation);
-    setMessages(val.data.getConversation!.messages as ChatMessage[]);
+    let data = val.data.getConversation!.messages;
+    setMessages( data?.length ? (val.data.getConversation!.messages as ChatMessage[]) : [initialMessage]);
   }
 
    
@@ -168,12 +170,9 @@ export default function ConversationElement({conversationId, prompt }: {
             <ScrollView width="100%" height="600px" maxWidth="1080px">
               {messages && (
                 <View>
-                  <Flex>
-                  <Text>{"User"}</Text>
-                  <Text>{prompt}</Text>
-                  </Flex>
+
                   {messages.map((message, index) => (
-                    index > 0 && (
+                    index >= 0 && (
                     <Flex key={index} direction="row" alignItems="center" margin="1rem 0">
                       <Text>{message.sender}</Text>
                       <Text>{message.message}</Text>
@@ -203,7 +202,7 @@ export default function ConversationElement({conversationId, prompt }: {
                 required
               />
               
-              <Button type="submit" variation="primary">
+              <Button disabled={loading} type="submit" variation="primary">
               Submit
             </Button>
             
