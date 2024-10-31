@@ -47,15 +47,23 @@ const client = generateClient({
 });
 
 export default function App() {
+return    (
+  <Authenticator>
+      {({ signOut, user }) => (
+        <Main signOut={signOut} user={user} />
+              )}
+    </Authenticator>);
+}
+
+function Main(props: {signOut: any, user: any}) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [conversationId, setConversationId] = useState("");
   const [prompt, setPrompt] = useState("");
   
-
-
   useEffect(() => {
     getConversations();
-  }, []);
+    console.log("User is", props.user.username);
+  }, [props.user.username]);
 
   async function getConversations() {
     const conversations = await client.graphql({
@@ -106,8 +114,6 @@ export default function App() {
    
 
   return (
-    <Authenticator>
-      {({ signOut, user }) => (
         <Grid   columnGap="0.5rem"
         rowGap="0.5rem"
         templateColumns="2fr 5fr"
@@ -157,8 +163,8 @@ export default function App() {
           <Button onClick={() => {
             setConversations([]);
             setConversationId("");
-            if (signOut) {
-              signOut();
+            if (props.signOut) {
+              props.signOut();
             }
             
           }}>Sign Out</Button>
@@ -169,7 +175,7 @@ export default function App() {
                 <ConversationElement conversationId={conversationId} prompt={prompt}/>
               )}
            {!conversationId && (
-          <View as="form" margin="3rem 0" onSubmit={(event) => handleCreateConversation(user, event)}>
+          <View as="form" margin="3rem 0" onSubmit={(event) => handleCreateConversation(props.user, event)}>
                 <TextField
                 name="prompt"
                 placeholder="Ask me a question"
@@ -194,7 +200,5 @@ export default function App() {
         </Card>
 
         </Grid>
-      )}
-    </Authenticator>
   );
 }
