@@ -97,16 +97,20 @@ function Main(props: {signOut: any, user: any}) {
     event.target.reset();
   }
 
-  async function handleDeleteConversation(conversationId: string ) {
+  async function handleDeleteConversation(id: string ) {
     await client.graphql({
       query: deleteConversation,
       variables: {
         input: {
-          conversationId
+          conversationId: id
         },
     }});
-    console.log("Mutation deleteConversation: input variable conversation ID set to ", conversationId);
+    console.log("Mutation deleteConversation: input variable conversation ID set to ", id);
     getConversations();
+    setConversations(conversations.filter(x => x.conversationId != id));
+    if(conversationId == id) {
+      setConversationId("");
+    }
   }
 
    
