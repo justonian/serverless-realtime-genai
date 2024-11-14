@@ -161,10 +161,11 @@ export class ChatappStack extends cdk.Stack {
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST
     });
 
+    // <-------------- REPLACE CODE BEGIN --------------> //
     // Predict Async Lambda
     const predictAsyncLambda = new NodejsFunction(this, 'PredictAsync', {
-      // Replace code here
     });
+    // <-------------- REPLACE CODE END --------------> //
 
     // Grant read/write data access to the DynamoDB table for the Lambda
     table.grantReadWriteData(predictAsyncLambda);
@@ -222,16 +223,17 @@ export class ChatappStack extends cdk.Stack {
       });
     };
 
+    // <-------------- REPLACE CODE BEGIN --------------> //
     const createLambdaFunction = (
       name: string,
       dataSource: cdk.aws_appsync.DynamoDbDataSource | appsync.LambdaDataSource,
       isAsync: boolean = false
     ) => {
-      // Replace code here
     };
+    // <-------------- REPLACE CODE END --------------> //
 
+    
     // Conversations
-
     const createConversationFunction = createResolverFunction(
       'createConversation',
       conversationHistoryDataSource,

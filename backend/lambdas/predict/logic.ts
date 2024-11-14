@@ -8,7 +8,7 @@ const client = new BedrockRuntimeClient({
     region: 'us-east-1'
 });
 
-
+// <-------------- REPLACE CODE BEGIN --------------> //
 /**
  * Perform an asynchronous prediction given a prompt and returns the chunks of the prediction as they are generated.
  * @param prompt {string} - The prompt to use for the prediction
@@ -18,6 +18,7 @@ export async function processAsynchronously({
 }: {
 }) {
 }
+  // <-------------- REPLACE CODE END --------------> //
 
 const {
     TABLE_NAME = '',
@@ -41,7 +42,7 @@ export function createTimeoutTask(
     });
   }
   
-
+// <-------------- REPLACE CODE BEGIN --------------> //
 /**
  * Processes a single event.
  * @param userId {string} The user ID.
@@ -58,3 +59,4 @@ export async function processSingleEvent({
   eventTimeout,
 }: EventType) {
 }
+// <-------------- REPLACE CODE END --------------> //
