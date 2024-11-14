@@ -147,7 +147,7 @@ export default function ConversationElement({conversationId, prompt }: {
           conversationId,
           prompt: userPrompt,
     }}});
-    console.log("Mutation createMessageAsync: Sending prompt '" + prompt + "' on conversation ID " + conversationId);
+    console.log("Mutation createMessageAsync: Sending prompt '" + userPrompt + "' on conversation ID " + conversationId);
 
     event.target.reset();
   }
