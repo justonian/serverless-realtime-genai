@@ -62,28 +62,26 @@ function Main(props: {signOut: any, user: any}) {
   
   useEffect(() => {
     getConversations();
-    console.log("User is", props.user.username);
+    console.log("User authenticated as Cognito User Pool ID:", props.user.username);
   }, [props.user.username]);
 
   async function getConversations() {
     const conversations = await client.graphql({
       query: getAllConversations});
-      console.log(conversations);
       setConversations(conversations.data.getAllConversations || []);
+    console.log("Query getConversations: ", conversations);
   }
 
-  async function handleCreateConversation(user: any, event: any) {
+  async function handleCreateConversation(event: any) {
     event.preventDefault();
     const form = new FormData(event.target);
-    console.log(user);
     let res = await client.graphql({
       query: createConversation,
      });
-     console.log(res.data);
      const prompt = form.get("prompt") as string;
     setConversationId(res.data.createConversation.conversation!.conversationId);
     setPrompt(prompt);
-    console.log("Created new conversation ID ", res.data.createConversation.conversation!.conversationId);
+    console.log("Mutation createConversation: New conversation ID ", res.data.createConversation.conversation!.conversationId);
     setConversations([...conversations, {
       conversationId: res.data.createConversation.conversation!.conversationId,
       messages:
@@ -107,7 +105,7 @@ function Main(props: {signOut: any, user: any}) {
           conversationId
         },
     }});
-    console.log("Deleted conversation ID to", conversationId);
+    console.log("Mutation deleteConversation: input variable conversation ID set to ", conversationId);
     getConversations();
   }
 
@@ -175,7 +173,7 @@ function Main(props: {signOut: any, user: any}) {
                 <ConversationElement conversationId={conversationId} prompt={prompt}/>
               )}
            {!conversationId && (
-          <View as="form" margin="3rem 0" onSubmit={(event) => handleCreateConversation(props.user, event)}>
+          <View as="form" margin="3rem 0" onSubmit={(event) => handleCreateConversation(event)}>
                 <TextField
                 name="prompt"
                 placeholder="Ask me a question"

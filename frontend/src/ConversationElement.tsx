@@ -108,17 +108,15 @@ export default function ConversationElement({conversationId, prompt }: {
     if (!conversationId) return;
     setLastMessage({sender: 'Assistant', message: ''});
     getConversationData();
-    console.log("Set conversation ID to", conversationId);
+    console.log("Subscription receiveMessageChunkAsync: subscribed to conversation ID ", conversationId);
     const subscription = createSubscription();
     return () => subscription.unsubscribe();
   }, [conversationId]);
 
   // Once loaded, append lastMessage and clear lastMessage
   useEffect(() => { 
-    console.log("Loading", loading);
     if (lastMessage && lastMessage.message) {
       setMessages([...messages, {...lastMessage}]);
-      console.log(lastMessage);
       setLastMessage({sender: 'Assistant', message: ''});
     }
 
@@ -149,7 +147,7 @@ export default function ConversationElement({conversationId, prompt }: {
           conversationId,
           prompt: userPrompt,
     }}});
-    console.log("Sending message " + prompt + " to conversation ID " + conversationId);
+    console.log("Mutation createMessageAsync: Sending prompt '" + prompt + "' on conversation ID " + conversationId);
 
     event.target.reset();
   }
@@ -162,7 +160,7 @@ export default function ConversationElement({conversationId, prompt }: {
           conversationId
         },
     }});
-    console.log("Getting data", val.data.getConversation);
+    console.log("Query getConversations: input variable conversation id set to", conversationId, val.data.getConversation);
     let data = val.data.getConversation!.messages;
     setMessages( data?.length ? (val.data.getConversation!.messages as ChatMessage[]) : [initialMessage]);
   }
