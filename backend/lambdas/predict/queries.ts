@@ -1,10 +1,8 @@
 import { AppSyncRequestIAM } from './appsync';
 import { MessageSystemStatus } from './types';
 
-const {
-    GRAPHQL_URL = '',
-    REGION = 'us-east-1'
-  } = process.env;
+const GRAPHQL_URL = process.env.GRAPHQL_URL || '';
+const REGION = process.env.AWS_REGION || 'us-east-1';
 
 /**
  * Sends a chunk to the all subscribers of the conversation providing the conversation's status, the chunk's order, type, and content.

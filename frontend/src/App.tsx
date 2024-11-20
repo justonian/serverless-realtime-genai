@@ -37,7 +37,7 @@ Amplify.configure({
   API: {
     GraphQL: {
       defaultAuthMode: "userPool",
-      region: "us-east-1",
+      region: CdkData.ChatappStack.AwsRegion,
       endpoint: CdkData.ChatappStack.GraphQLAPIURL
     }
   }

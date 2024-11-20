@@ -18,6 +18,9 @@ export class ChatappStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    // Get the current region
+    const awsRegion = cdk.Stack.of(this).region;
+
     // Create a CloudFront distribution and S3 bucket for hosting the web page
     const websiteBucket = new s3.Bucket(this, 'ContentBucket', {
       publicReadAccess: false,
@@ -119,7 +122,7 @@ export class ChatappStack extends cdk.Stack {
     bedrockLambda.grantPrincipal.addToPrincipalPolicy(
       new PolicyStatement({
         resources: [
-          "arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-v2",
+          "arn:aws:bedrock:" + awsRegion + "::foundation-model/anthropic.claude-v2",
         ],
         actions: ["bedrock:InvokeModel"],
       })
@@ -335,6 +338,11 @@ export class ChatappStack extends cdk.Stack {
     // Output the API Gateway endpoint URL
     new cdk.CfnOutput(this, 'GraphQLAPIURL', {
       value: api.graphqlUrl
+    });
+
+    // Output the AWS region
+    new cdk.CfnOutput(this, 'AwsRegion', {
+      value: awsRegion
     });
 
     
