@@ -5,7 +5,7 @@ import { BedrockRuntimeClient, ConverseStreamCommand, Message } from "@aws-sdk/c
 
 
 const client = new BedrockRuntimeClient({
-    region: 'us-east-1'
+    region: process.env.AWS_REGION || 'us-east-1'
 });
 
 
