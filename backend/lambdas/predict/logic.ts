@@ -8,6 +8,7 @@ const client = new BedrockRuntimeClient({
     region: process.env.AWS_REGION || 'us-east-1'
 });
 
+const MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0";
 
 /**
  * Perform an asynchronous prediction given a prompt and returns the chunks of the prediction as they are generated.
@@ -22,7 +23,7 @@ export async function processAsynchronously({
   callback: (result: string) => Promise<void>;
 }) {
   let command = new ConverseStreamCommand({
-    modelId: "anthropic.claude-3-haiku-20240307-v1:0",
+    modelId: MODEL_ID,
     messages: history,
     inferenceConfig: {
       maxTokens: 512,
@@ -44,6 +45,11 @@ export async function processAsynchronously({
     }
   } catch (err) {
     console.error("STREAM ERROR",err);
+    if (err instanceof Error) {
+      await callback(`Error from invoking model ${MODEL_ID}:  ${err.message}`);
+    } else {
+      await callback('An unknown error occurred.');
+    }
   }
   
 }
