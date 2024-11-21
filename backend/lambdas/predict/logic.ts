@@ -8,6 +8,8 @@ const client = new BedrockRuntimeClient({
     region: process.env.AWS_REGION || 'us-east-1'
 });
 
+const MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0";
+
 // <-------------- REPLACE CODE BEGIN --------------> //
 /**
  * Perform an asynchronous prediction given a prompt and returns the chunks of the prediction as they are generated.

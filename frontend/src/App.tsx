@@ -137,6 +137,7 @@ function Main(props: {signOut: any, user: any}) {
           columnEnd="2"
         >
           <ScrollView width="100%" height="600px" maxWidth="1080px">
+            <Heading level={5}>Conversations</Heading><br/>
           <Table
             caption=""
             highlightOnHover={true}>
